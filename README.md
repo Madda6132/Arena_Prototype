@@ -2,6 +2,6 @@
 
  Player use weapons with random abilitys and effects as they fight waves of enemies
 
-Project Challenges
+**Project Challenges**
 - Ability
 - Statistics
