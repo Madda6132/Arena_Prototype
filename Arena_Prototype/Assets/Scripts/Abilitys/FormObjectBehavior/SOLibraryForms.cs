@@ -40,6 +40,8 @@ namespace RPG.Abilitys.Form {
             behaviorLibrary.Add(AbilityElement.Lightning, listOfLightningBehaviors);
         }
 
+        /*---Private---*/
+
         private void OnEnable() {
             if (instance != null && instance != this) {
                 Debug.LogWarning("Already exists");

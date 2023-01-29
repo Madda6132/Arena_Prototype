@@ -40,24 +40,7 @@ namespace RPG.Creatures {
 
         public Action<int> OnTakeHit;
 
-        private void Awake() {
 
-            //Stats
-            SetStatistics();
-
-            healthManager = new(gameObject, statistic);
-            AfflictionManager = new();
-            ActionHandler = new(this);
-            EquipmentManager = new(this);
-
-            creatureControler = GetComponent<ICreatureControler>();
-
-            OnTakeHit += TakeDamage;
-            OnTakeHit += (int damage) => ActionHandler.AnimatorHandler.PlayTargetAnimation("Impact", 2);
-
-            //Transforms
-            TargetMark = creatureTargetMark;
-        }
 
         //Needs to handle what happens in the effects
         public void TakeCombatEffect(EffectInformation effectInformation) {
@@ -88,6 +71,28 @@ namespace RPG.Creatures {
 
         //Animator sends messages to this
         public void AnimationReciver(string animationTrigger) => ActionHandler.AnimationReciver(animationTrigger);
+
+        /*---Private---*/
+
+        private void Awake() {
+
+            //Stats
+            SetStatistics();
+
+            healthManager = new(gameObject, statistic);
+            AfflictionManager = new();
+            ActionHandler = new(this);
+            EquipmentManager = new(this);
+
+            creatureControler = GetComponent<ICreatureControler>();
+
+            OnTakeHit += TakeDamage;
+            OnTakeHit += (int damage) => ActionHandler.AnimatorHandler.PlayTargetAnimation("Impact", 2);
+
+            //Transforms
+            TargetMark = creatureTargetMark;
+        }
+
 
         private void Death() {
 

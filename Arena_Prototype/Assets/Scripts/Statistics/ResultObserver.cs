@@ -29,6 +29,8 @@ namespace RPG.Statistics {
 
         public void OnResultUpdate(UpdateValue result) => updateMethod?.Invoke(result);
 
+        /*---Private---*/
+
         ~ResultObserver() {
             statisticsController?.RemoveListener<AbstractStatistic, UpdateValue>(this);
 

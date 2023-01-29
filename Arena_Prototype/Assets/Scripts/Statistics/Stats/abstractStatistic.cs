@@ -83,6 +83,8 @@ namespace RPG.Statistics {
 
         public abstract void AddValue(TValue addingValue);
 
+        /*---Protected---*/
+
         abstract protected TValue GetFlatBonuses();
 
         /// <summary>

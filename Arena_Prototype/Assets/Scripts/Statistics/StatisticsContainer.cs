@@ -37,6 +37,8 @@ namespace RPG.Statistics {
             
         }
 
+        /*---Private---*/
+
         private T GetContainer<T>() where T : IStatistic {
 
             return (T)(statCategory[typeof(T)] ?? default);

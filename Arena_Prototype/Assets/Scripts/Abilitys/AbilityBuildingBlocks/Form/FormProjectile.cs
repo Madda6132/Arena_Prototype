@@ -39,6 +39,8 @@ namespace RPG.Abilitys.Form {
             return projectileObject; 
         }
 
+        /*---Protected---*/
+
         protected override void SetTargetTypeAndCost() {
             TargetType[] randomTargetList = new TargetType[] { TargetType.Object, TargetType.Position, TargetType.Direction };
             targetingType = randomTargetList[Random.Range(1, randomTargetList.Length)];

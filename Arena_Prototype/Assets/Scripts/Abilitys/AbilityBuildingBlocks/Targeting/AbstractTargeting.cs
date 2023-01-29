@@ -54,7 +54,7 @@ namespace RPG.Abilitys.Targeting {
         public abstract Vector3[] TargetDirection(Ability.AbilityBaseInfo abilityBaseInfo, Vector3 forwardDirection,
             Vector3 upDirection);
 
-        
+        /*---Protected---*/
 
         /// <summary>
         /// Change sub to activate collider
@@ -67,6 +67,7 @@ namespace RPG.Abilitys.Targeting {
             
             Debug.Log("StartAction on " + user.gameObject.name);
         }
+
         /// <summary>
         /// Change unsub to deactivate collider
         /// </summary>

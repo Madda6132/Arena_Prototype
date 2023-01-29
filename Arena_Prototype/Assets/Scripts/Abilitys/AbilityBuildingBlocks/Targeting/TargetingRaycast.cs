@@ -71,9 +71,7 @@ namespace RPG.Abilitys.Targeting {
             return rays.Select(x => x.direction).ToArray();
         }
 
-
-        //---Private---
-
+        /*---Private---*/
 
         private RaycastHit[] GetSphereCastHits(Ability.AbilityBaseInfo abilityBaseInfo, Vector3 forwardDirection) {
 
@@ -85,9 +83,5 @@ namespace RPG.Abilitys.Targeting {
 
             return hits = hits.OrderByDescending(x => x.distance).Take(rayTargetAmount).ToArray();
         }
-
-
-
-
     }
 }

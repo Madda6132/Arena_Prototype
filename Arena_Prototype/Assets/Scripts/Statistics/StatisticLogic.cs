@@ -72,6 +72,8 @@ namespace RPG.Statistics {
             return ((abstractStatistic<TReturn>)stat).GetStatvalue(this);
         }
 
+        /*---Private---*/
+
         private void UpdateStatListeners<TStat, TUpdateValue>(TUpdateValue updateValue) where TStat : IStatistic {
             IStatistic stat = ReadStatValue<TStat>();
             ((abstractStatistic<TUpdateValue>)stat).UpdateAllListener(updateValue);

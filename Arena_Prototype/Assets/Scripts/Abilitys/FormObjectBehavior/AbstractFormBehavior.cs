@@ -51,37 +51,6 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
     float _TimePast = 0;
     float _TickTracker = 0f;
 
-
-    private void OnDrawGizmosSelected() {
-        Debug.DrawRay(transform.position, transform.forward, Color.red);
-    }
-
-    private void Awake() {
-        //ParticleEffects a behavior will perform during it's lifetime
-        particleEffectTasks.ForEach(x => x.SubToCall(this));
-        
-    }
-
-    private void Update() {
-
-        _TimePast += Time.deltaTime;
-
-        if (_LifeTime < _TimePast) EndFormBehavior();
-
-        if (_TickTracker < _TimePast) {
-
-            _TickTracker += tickTimer;
-
-            foreach (var listener in ActionDictinary[typeof(IActionMessageListener)]) {
-
-                ((IActionMessageListener)listener).Perform(this, FormUtilityMessages.TICK);
-            }
-            OnTickForm?.Invoke(this, GetTickPosition()); 
-        }
-
-        ExtraUpdate();
-    }
-
     //Once the startup is finished call, start form
     public virtual void StartForm(Ability.AbilityBaseInfo abilityBaseInfo, AbstractForm form) {
 
@@ -174,6 +143,7 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
         }
         return directions;
     }
+
     /// <summary>
     /// Get GameObjects from the Form Behavior
     /// </summary>
@@ -214,7 +184,6 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
         }
     }
 
-
     #region Subscriptions
 
     //Subscribe to events
@@ -238,7 +207,8 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
 
     #endregion
 
-    //---Protected---
+    /*---Protected---*/
+
     protected abstract void ExtraUpdate();
     protected abstract Vector3 GetStartPosition();
     protected abstract Vector3 GetEndPosition();
@@ -353,7 +323,38 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
     }
     #endregion
 
-    //---Private---
+    /*---Private---*/
+
+
+    private void OnDrawGizmosSelected() {
+        Debug.DrawRay(transform.position, transform.forward, Color.red);
+    }
+
+    private void Awake() {
+        //ParticleEffects a behavior will perform during it's lifetime
+        particleEffectTasks.ForEach(x => x.SubToCall(this));
+
+    }
+
+    private void Update() {
+
+        _TimePast += Time.deltaTime;
+
+        if (_LifeTime < _TimePast) EndFormBehavior();
+
+        if (_TickTracker < _TimePast) {
+
+            _TickTracker += tickTimer;
+
+            foreach (var listener in ActionDictinary[typeof(IActionMessageListener)]) {
+
+                ((IActionMessageListener)listener).Perform(this, FormUtilityMessages.TICK);
+            }
+            OnTickForm?.Invoke(this, GetTickPosition());
+        }
+
+        ExtraUpdate();
+    }
 
 
     /// <summary>

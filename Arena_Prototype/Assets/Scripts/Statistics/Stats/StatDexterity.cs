@@ -8,6 +8,8 @@ namespace RPG.Statistics {
 
         private static string statisticName = "Dexterity";
         
+
+
         public StatDexterity(int basevalue = 0) : base(basevalue) {
             
         }
@@ -29,6 +31,12 @@ namespace RPG.Statistics {
         
         public static string GetName => statisticName;
 
+        public override void AddValue(int addingValue) {
+            baseValue += addingValue;
+        }
+
+        /*---Protected---*/
+
         protected override int Formula(IStatisticsController statisticsController) {
 
             int totalValue = baseValue;
@@ -38,17 +46,10 @@ namespace RPG.Statistics {
             return totalValue;
         }
 
-
         protected override int GetFlatBonuses() {
             int bonuses = 0;
             FlatBonuses?.ForEach(x => bonuses += x.GetFlatModifier());
             return bonuses;
         }
-
-        public override void AddValue(int addingValue) {
-            baseValue += addingValue;
-        }
-
     }
-
 }

@@ -29,6 +29,8 @@ namespace RPG.Combat {
             checkIfHit = checkHit != null ? checkHit : DefaultCheckHit;
         }
 
+        /*---Private---*/
+
         //Damage type "Fire/Lighting"
         //Damage Amount
         //Instigator "user"

@@ -5,7 +5,12 @@ using RPG.Creatures;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyLocomotionManager : MonoBehaviour
 {
-    
+
+    public enum TravleSpeed {
+        Walk,
+        Run
+    }
+
     NavMeshAgent navMeshAgent;
     AnimatorHandler animatorManager;
 
@@ -16,30 +21,6 @@ public class EnemyLocomotionManager : MonoBehaviour
 
     float navMeshAgentStartSpeed = 6;
 
-    private void Awake()
-    {
-        
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        navMeshAgentStartSpeed = navMeshAgent.speed;
-    }
-
-    private void Start() {
-
-        animatorManager = GetComponent<Creature>().ActionHandler.AnimatorHandler;
-    }
-
-    private void Update()
-    {
-        
-        UpdateAnimation();
-        CheckInteraction();
-    }
-
-    //Check to see if AI is busy with interaction to prevent other actions
-    private void CheckInteraction()
-    {
-        isInteractiong = animatorManager.GetAnimatorBool("IsInteracting");
-    }
 
     public void HandleMoveToTarget(Vector3 pos, TravleSpeed travleSpeed = TravleSpeed.Run)
     {
@@ -67,7 +48,30 @@ public class EnemyLocomotionManager : MonoBehaviour
     {
         navMeshAgent.isStopped = !AllowMovement;
     }
-    
+
+    /*---Private---*/
+
+    private void Awake() {
+
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshAgentStartSpeed = navMeshAgent.speed;
+    }
+
+    private void Start() {
+
+        animatorManager = GetComponent<Creature>().ActionHandler.AnimatorHandler;
+    }
+
+    private void Update() {
+
+        UpdateAnimation();
+        CheckInteraction();
+    }
+
+    //Check to see if AI is busy with interaction to prevent other actions
+    private void CheckInteraction() {
+        isInteractiong = animatorManager.GetAnimatorBool("IsInteracting");
+    }
 
     private void UpdateAnimation()
     {
@@ -77,12 +81,4 @@ public class EnemyLocomotionManager : MonoBehaviour
         
         animatorManager.UpdateAnimatorMovementValues(0, localVelocity.z, false);
     }
-
-
-    public enum TravleSpeed
-    {
-        Walk,
-        Run
-    }
-
 }

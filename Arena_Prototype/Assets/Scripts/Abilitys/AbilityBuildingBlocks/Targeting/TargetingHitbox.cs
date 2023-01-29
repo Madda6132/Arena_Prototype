@@ -55,6 +55,8 @@ namespace RPG.Abilitys.Targeting {
             return new Vector3[0];
         }
 
+        /*---Protected---*/
+
         //Subscribes to a weapon script to pass GameoObjects hit to Form
         protected override void SubToPerformAction(Creature user, AbilityPerformAction performanceAction, Action performAbility) {
             
@@ -79,6 +81,8 @@ namespace RPG.Abilitys.Targeting {
             //Unsub to call method when collider triggers
             performanceAction.UnsubToEquipmentColliderTrigger(performanceAction.PerformTriggerAbility);
         }
+
+        /*---Private---*/
 
         //Perform this when collider hits something and check what info to pass on
         private void PerformAbilityColliderTrigger(Ability.AbilityBaseInfo abilityBaseInfo, 

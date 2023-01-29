@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using RPG.Abilitys;
 using RPG.Creatures;
@@ -32,9 +30,26 @@ namespace RPG.Inventory {
         QuickAbility quickAbility;
         ChannelAbility channelAbility;
 
+        public Transform GetAbilityStartLocation => AbilityStartLocation;
+        public QuickAbility GetQuickAbility => quickAbility;
+        public ChannelAbility GetChannelAbility => channelAbility;
+
+        public AbilityPerformAction GetAbilityPerformAction(Creature creature) => quickAbility.GetAbilityAction(creature, this);
+
+        public void ActivateChannelAbility(Creature creature) {
+            Debug.Log("ChannelAbility");
+        }
+        public void ActivateCollider() => TargetingCollider.enabled = true;
+        public void DeactivateCollider() => TargetingCollider.enabled = false;
+
+        public void SubToColliderTrigger(Action<GameObject> Lister) => OnTargetEnterTrigger += Lister;
+        public void UnsubToColliderTrigger(Action<GameObject> Lister) => OnTargetEnterTrigger -= Lister;
+
+        /*---Private---*/
+
         private void OnDrawGizmosSelected() {
 
-            Gizmos.DrawSphere(transform.position, 0.05f); 
+            Gizmos.DrawSphere(transform.position, 0.05f);
         }
 
         private void Awake() {
@@ -51,20 +66,7 @@ namespace RPG.Inventory {
             Debug.Log("Create ChannelAbility");
             //channelAbility = new() Not made yet
         }
-        public Transform GetAbilityStartLocation => AbilityStartLocation;
-        public QuickAbility GetQuickAbility => quickAbility;
-        public ChannelAbility GetChannelAbility => channelAbility;
 
-        public AbilityPerformAction GetAbilityPerformAction(Creature creature) => quickAbility.GetAbilityAction(creature, this);
-
-        public void ActivateChannelAbility(Creature creature) {
-            Debug.Log("ChannelAbility");
-        }
-        public void ActivateCollider() => TargetingCollider.enabled = true;
-        public void DeactivateCollider() => TargetingCollider.enabled = false;
-
-        public void SubToColliderTrigger(Action<GameObject> Lister) => OnTargetEnterTrigger += Lister;
-        public void UnsubToColliderTrigger(Action<GameObject> Lister) => OnTargetEnterTrigger -= Lister;
         private void OnTriggerEnter(Collider other) {
 
             if(other.TryGetComponent(out IDamageable creature))

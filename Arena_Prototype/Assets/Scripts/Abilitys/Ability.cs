@@ -163,7 +163,7 @@ namespace RPG.Abilitys {
             }
         }
 
-        //---Private---
+        /*---Private---*/
 
         private void FillAbility(int energy, Targeting.AbstractTargeting targeting = null,
             Form.AbstractForm form = null, Effect.AbstractAbilityEffect[] effects = null) {

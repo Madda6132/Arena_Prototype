@@ -32,6 +32,7 @@ namespace RPG.Abilitys.Form {
 
         public TargetType GetTargetingType => targetingType;
 
+        /*---Protected---*/
 
         /// <summary>
         /// Sets the targeting type and cost.

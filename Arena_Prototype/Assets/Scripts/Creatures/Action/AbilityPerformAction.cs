@@ -164,7 +164,7 @@ namespace RPG.Actions {
         /// <param name="Lister"> The action that will revive the triggered target </param>
         public void UnsubToEquipmentColliderTrigger(Action<GameObject> Lister) => targetingInfo.UnsubToColliderTrigger(Lister);
 
-        //---Private---
+        /*---Private---*/
 
         //When Action is performing subscribe to the required events
         private void StartSubAction() => subAction?.Invoke(user, this, performAbility);

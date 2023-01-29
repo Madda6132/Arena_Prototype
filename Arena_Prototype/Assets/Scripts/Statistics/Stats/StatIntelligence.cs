@@ -28,6 +28,12 @@ namespace RPG.Statistics {
 
         public string GetName => statisticName;
 
+        public override void AddValue(int addingValue) {
+            baseValue += addingValue;
+        }
+
+        /*---Protected---*/
+
         protected override int Formula(IStatisticsController statisticsController) {
 
             int totalValue = baseValue;
@@ -44,9 +50,6 @@ namespace RPG.Statistics {
             return bonuses;
         }
 
-        public override void AddValue(int addingValue) {
-            baseValue += addingValue;
-        }
     }
 
 }

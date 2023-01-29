@@ -11,6 +11,10 @@ namespace RPG.Statistics {
 
         }
 
+        public override void AddValue(int addingValue) {
+            baseValue += addingValue;
+        }
+
         //Static cant be in another class so make sure to Copy the block "Static Statistic interface"
         #region Static Statistic interface
 
@@ -28,6 +32,9 @@ namespace RPG.Statistics {
 
         
         public string GetName => statisticName;
+
+        /*---Protected---*/
+
         protected override int Formula(IStatisticsController statisticsController) {
 
             int totalValue = baseValue;
@@ -37,16 +44,12 @@ namespace RPG.Statistics {
             return totalValue;
         }
 
-
         protected override int GetFlatBonuses() {
             int bonuses = 0;
             FlatBonuses?.ForEach(x => bonuses += x.GetFlatModifier());
             return bonuses;
         }
 
-        public override void AddValue(int addingValue) {
-            baseValue += addingValue;
-        }
     }
 
 }

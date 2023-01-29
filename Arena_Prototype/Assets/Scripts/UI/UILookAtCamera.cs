@@ -6,6 +6,13 @@ namespace RPG.Creatures.UI {
         Transform cameraTransform;
         [SerializeField] bool isActive = true;
 
+
+
+        public void Activate() => isActive = true;
+        public void Deactivate() => isActive = false;
+
+        /*---Private---*/
+
         private void Start() {
             cameraTransform = Camera.main.transform;
         }
@@ -18,9 +25,6 @@ namespace RPG.Creatures.UI {
                 transform.LookAt(transform.position + cameraTransform.forward);
             }
         }
-
-        public void Activate() => isActive = true;
-        public void Deactivate() => isActive = false;
     }
 }
 

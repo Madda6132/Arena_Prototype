@@ -34,6 +34,8 @@ namespace RPG.Abilitys.Form {
             return explosionObject;
         }
 
+        /*---Protected---*/
+
         protected override void SetTargetTypeAndCost() {
 
             TargetType[] randomTargetList = new TargetType[] { TargetType.Object, TargetType.Position, TargetType.Direction };

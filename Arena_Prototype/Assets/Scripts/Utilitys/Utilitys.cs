@@ -150,6 +150,8 @@ namespace RPG {
             return hasValues;
         }
 
+        /*---Private---*/
+
         private static bool CheckCastColor(ILayoutElement element) {
 
             switch (element) {

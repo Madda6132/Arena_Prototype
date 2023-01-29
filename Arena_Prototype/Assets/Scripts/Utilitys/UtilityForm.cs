@@ -258,8 +258,8 @@ namespace RPG {
 
             return new(_X, _Y, _Z, Pos);
         }
-        
-        //---Private---
+
+        /*---Private---*/
 
         /// <summary>
         /// 

@@ -34,6 +34,8 @@ namespace RPG.Creatures {
             return currentHealth < 1;
         }
 
+        /*---Private---*/
+
         private void MaxHealthChange(int newMaxHealth) {
 
             //Change current health with the Max health changes

@@ -41,145 +41,6 @@ public class EnemyManager : MonoBehaviour, ICreatureControler /*, ISaveable, IOb
     int waypointIndex = 0;
 
      
-    private void OnDrawGizmosSelected()
-    {
-
-        Quaternion upRayRotation = Quaternion.AngleAxis(minimumDetectionAngle, Vector3.up);
-        Quaternion downRayRotation = Quaternion.AngleAxis(maximumDetectionAngle, Vector3.up);
-
-        Vector3 upRayDirection = upRayRotation * transform.forward * detectionRadius;
-        Vector3 downRayDirection = downRayRotation * transform.forward * detectionRadius;
-
-        Gizmos.DrawRay(transform.position + Vector3.up, upRayDirection);
-        Gizmos.DrawRay(transform.position + Vector3.up, downRayDirection);
-        Gizmos.DrawLine(transform.position + Vector3.up + downRayDirection, transform.position + Vector3.up + upRayDirection);
-    }
-
-
-    private void Awake()
-    {
-        enemyLocomotionManager = GetComponent<EnemyLocomotionManager>();
-        creature = GetComponent<Creature>();
-        weaponEquipment = creature.EquipmentManager.GetWeaponEquipment; 
-        //equipmentSlotManager = GetComponent<EquipmentSlotManager>();
-        //if (patrolPath != null) { guardPosition = patrolPath.GetWaypoint(waypointIndex); 
-        //} else {
-        //    guardPosition = transform.position;
-        //}
-        //playerAttack = GetComponent<PlayerAttack>();
-        //GetComponent<CreatureController>().SubToCreatureDeath(this);
-    }
-     
-    // Update is called once per frame
-    void Update()
-    {
-        if (!isManagerActive) return;
-
-        HandleDetection();
-        HandleCurrentAction();
-
-        timer += Time.deltaTime;
-        //attackTimer += Time.deltaTime;
-    }
-    private void HandleCurrentAction()
-    {
-         
-        switch (currentState)
-        {
-            case State.Pattrol:
-                //PattrolBehaviour();
-                break;
-
-            case State.Inspect:
-                if (timer >= intresstTimer) ChangeState(State.Pattrol);
-                currentTarget = null;
-                //playerAttack.SetTarget(currentTarget);
-                //Wait before going back to patroll
-                break;
-
-            case State.Attack:
-                AttackBehaviour();
-
-                break;
-            default:
-                break;
-        }
-
-        
-    }
-
-    //private void PattrolBehaviour()
-    //{
-
-    //    if(patrolPath != null)
-    //    {
-    //        if (DistanceToTarget(guardPosition) <= 1f)
-    //        {
-    //            waypointIndex = patrolPath.GetNextIndex(waypointIndex);
-    //            guardPosition = patrolPath.GetWaypoint(waypointIndex);
-
-    //        }
-    //    }
-
-    //    enemyLocomotionManager.HandleMoveToTarget(guardPosition, EnemyLocomotionManager.TravleSpeed.Walk);
-    //}
-
-    private void AttackBehaviour()
-    {
-        //Check if dead or board
-        if (!currentTarget.GetComponent<Creature>().isAlive || timer >= intresstTimer) {
-            ChangeState(State.Inspect);
-            return;
-        }
-
-
-        float EquipedWeapon = 2f;
-
-        if (DistanceToTarget(currentTarget.transform.position) <= EquipedWeapon) {  //equipmentSlotManager.currentlyEquipedWeapon.Range) {
-            RaycastHit hit;
-
-            Debug.DrawRay(eyePosition.position, ((currentTarget.transform.position + (Vector3.up * currentTarget.GetComponent<Collider>().bounds.max.y * 0.75f)) - eyePosition.position), Color.blue, 2f);
-            if (Physics.Raycast(eyePosition.position, ((currentTarget.transform.position + (Vector3.up * currentTarget.GetComponent<Collider>().bounds.max.y * 0.75f)) - eyePosition.position), out hit,
-            //Mathf.RoundToInt(equipmentSlotManager.currentlyEquipedWeapon.Range + 0.5f)) && hit.collider.tag != "Player") {
-                Mathf.RoundToInt(EquipedWeapon + 0.5f)) && hit.collider.tag != "Player") {
-                    enemyLocomotionManager.HandleMoveToTarget(currentTarget.transform.position);
-                return;
-            }
-
-            enemyLocomotionManager.ActivateMovement(false);
-            AttackTarget();
-
-        } else {
-
-            enemyLocomotionManager.HandleMoveToTarget(currentTarget.transform.position);
-        }
-
-    }
-
-    private void ChangeState(State state)
-    {
-        currentState = state;
-        timer = 0;
-    }
-
-    private float DistanceToTarget(Vector3 pos)
-    {
-        return Vector3.Distance(pos, transform.position);
-    }
-
-    private void AttackTarget()
-    {
-        Quaternion creatureRot = transform.rotation;
-        Quaternion lookAtRotation = Quaternion.RotateTowards(transform.rotation,
-            Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized), rotationSpeed * Time.deltaTime);
-
-        Quaternion newRotation = new Quaternion(creatureRot.x, lookAtRotation.y, creatureRot.z, creatureRot.w);
-        transform.rotation = newRotation;
-
-
-        //ability.Use(gameObject, true); 
-
-    }
 
     public void HandleDetection()
     {
@@ -220,7 +81,7 @@ public class EnemyManager : MonoBehaviour, ICreatureControler /*, ISaveable, IOb
     public void DisabledControler() => isManagerActive = false;
 
     public void EnableControler() => isManagerActive = true;
-    
+
 
     //public object CaptureState()
     //{
@@ -238,6 +99,140 @@ public class EnemyManager : MonoBehaviour, ICreatureControler /*, ISaveable, IOb
     //    deactivateManager = true;
     //    enemyLocomotionManager.ActivateMovement(false);
     //}
+
+    /*---Private---*/
+
+
+    private void OnDrawGizmosSelected() {
+
+        Quaternion upRayRotation = Quaternion.AngleAxis(minimumDetectionAngle, Vector3.up);
+        Quaternion downRayRotation = Quaternion.AngleAxis(maximumDetectionAngle, Vector3.up);
+
+        Vector3 upRayDirection = upRayRotation * transform.forward * detectionRadius;
+        Vector3 downRayDirection = downRayRotation * transform.forward * detectionRadius;
+
+        Gizmos.DrawRay(transform.position + Vector3.up, upRayDirection);
+        Gizmos.DrawRay(transform.position + Vector3.up, downRayDirection);
+        Gizmos.DrawLine(transform.position + Vector3.up + downRayDirection, transform.position + Vector3.up + upRayDirection);
+    }
+
+
+    private void Awake() {
+        enemyLocomotionManager = GetComponent<EnemyLocomotionManager>();
+        creature = GetComponent<Creature>();
+        weaponEquipment = creature.EquipmentManager.GetWeaponEquipment;
+        //equipmentSlotManager = GetComponent<EquipmentSlotManager>();
+        //if (patrolPath != null) { guardPosition = patrolPath.GetWaypoint(waypointIndex); 
+        //} else {
+        //    guardPosition = transform.position;
+        //}
+        //playerAttack = GetComponent<PlayerAttack>();
+        //GetComponent<CreatureController>().SubToCreatureDeath(this);
+    }
+
+    // Update is called once per frame
+    void Update() {
+        if (!isManagerActive) return;
+
+        HandleDetection();
+        HandleCurrentAction();
+
+        timer += Time.deltaTime;
+        //attackTimer += Time.deltaTime;
+    }
+    private void HandleCurrentAction() {
+
+        switch (currentState) {
+            case State.Pattrol:
+                //PattrolBehaviour();
+                break;
+
+            case State.Inspect:
+                if (timer >= intresstTimer) ChangeState(State.Pattrol);
+                currentTarget = null;
+                //playerAttack.SetTarget(currentTarget);
+                //Wait before going back to patroll
+                break;
+
+            case State.Attack:
+                AttackBehaviour();
+
+                break;
+            default:
+                break;
+        }
+
+
+    }
+
+    //private void PattrolBehaviour()
+    //{
+
+    //    if(patrolPath != null)
+    //    {
+    //        if (DistanceToTarget(guardPosition) <= 1f)
+    //        {
+    //            waypointIndex = patrolPath.GetNextIndex(waypointIndex);
+    //            guardPosition = patrolPath.GetWaypoint(waypointIndex);
+
+    //        }
+    //    }
+
+    //    enemyLocomotionManager.HandleMoveToTarget(guardPosition, EnemyLocomotionManager.TravleSpeed.Walk);
+    //}
+
+    private void AttackBehaviour() {
+        //Check if dead or board
+        if (!currentTarget.GetComponent<Creature>().isAlive || timer >= intresstTimer) {
+            ChangeState(State.Inspect);
+            return;
+        }
+
+
+        float EquipedWeapon = 2f;
+
+        if (DistanceToTarget(currentTarget.transform.position) <= EquipedWeapon) {  //equipmentSlotManager.currentlyEquipedWeapon.Range) {
+            RaycastHit hit;
+
+            Debug.DrawRay(eyePosition.position, ((currentTarget.transform.position + (Vector3.up * currentTarget.GetComponent<Collider>().bounds.max.y * 0.75f)) - eyePosition.position), Color.blue, 2f);
+            if (Physics.Raycast(eyePosition.position, ((currentTarget.transform.position + (Vector3.up * currentTarget.GetComponent<Collider>().bounds.max.y * 0.75f)) - eyePosition.position), out hit,
+            //Mathf.RoundToInt(equipmentSlotManager.currentlyEquipedWeapon.Range + 0.5f)) && hit.collider.tag != "Player") {
+                Mathf.RoundToInt(EquipedWeapon + 0.5f)) && hit.collider.tag != "Player") {
+                enemyLocomotionManager.HandleMoveToTarget(currentTarget.transform.position);
+                return;
+            }
+
+            enemyLocomotionManager.ActivateMovement(false);
+            AttackTarget();
+
+        } else {
+
+            enemyLocomotionManager.HandleMoveToTarget(currentTarget.transform.position);
+        }
+
+    }
+
+    private void ChangeState(State state) {
+        currentState = state;
+        timer = 0;
+    }
+
+    private float DistanceToTarget(Vector3 pos) {
+        return Vector3.Distance(pos, transform.position);
+    }
+
+    private void AttackTarget() {
+        Quaternion creatureRot = transform.rotation;
+        Quaternion lookAtRotation = Quaternion.RotateTowards(transform.rotation,
+            Quaternion.LookRotation((currentTarget.transform.position - transform.position).normalized), rotationSpeed * Time.deltaTime);
+
+        Quaternion newRotation = new Quaternion(creatureRot.x, lookAtRotation.y, creatureRot.z, creatureRot.w);
+        transform.rotation = newRotation;
+
+
+        //ability.Use(gameObject, true); 
+
+    }
 
     [System.Serializable]
     private class SaveState {

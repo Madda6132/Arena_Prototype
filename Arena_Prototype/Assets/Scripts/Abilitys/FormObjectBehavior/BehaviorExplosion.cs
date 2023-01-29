@@ -12,12 +12,6 @@ public class BehaviorExplosion : AbstractFormBehavior {
     int pointsAmount = 3;
 
 
-    private void Start() {
-        _LifeTime = 2f;
-
-    }
-     
-
     public override void StartForm(RPG.Abilitys.Ability.AbilityBaseInfo abilityBaseInfo, AbstractForm form) {
         base.StartForm(abilityBaseInfo, form);
 
@@ -35,9 +29,17 @@ public class BehaviorExplosion : AbstractFormBehavior {
     public override GameObject[] GetTargetObjects() =>
         Physics.OverlapSphere(transform.position, explosionRadius).Select(x => x.gameObject).ToArray();
 
+    /*---Protected---*/
+
     protected override Vector3 GetStartPosition() => transform.position;
     protected override Vector3 GetEndPosition() => transform.position;
     protected override Vector3 GetTickPosition() => transform.position;
     protected override void ExtraUpdate() { }
 
+    /*---Private---*/
+
+    private void Start() {
+        _LifeTime = 2f;
+
+    }
 }

@@ -27,6 +27,9 @@ namespace RPG.Abilitys.Form {
                 60f, pointsAmount);
             return directions.Select(x => x.GetPoint(1f)).ToArray();
         }
+
+        /*---Protected---*/
+
         protected override Vector3 GetStartPosition() => transform.position;
         protected override Vector3 GetEndPosition() => transform.position;
         protected override Vector3 GetTickPosition() => transform.position;
@@ -38,8 +41,6 @@ namespace RPG.Abilitys.Form {
         }
 
 
-        private void OnTriggerEnter(Collider other) => SendGameObject(other.gameObject);
-
         protected override void EndFormBehavior() {
 
             //Create a Particle effect on Destroy
@@ -49,6 +50,11 @@ namespace RPG.Abilitys.Form {
 
             base.EndFormBehavior();
         }
+
+        /*---Private---*/
+
+        private void OnTriggerEnter(Collider other) => SendGameObject(other.gameObject);
+
 
         private void AddDestroyOnTrigger() {
             //Will be destroyed on impact

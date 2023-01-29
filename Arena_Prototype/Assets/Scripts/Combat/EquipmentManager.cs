@@ -53,6 +53,9 @@ namespace RPG.Creatures {
 
             SetEquipmentPosition(equipment, leftEquipmentPlacement);
         }
+
+        /*---Private---*/
+
         private void SetEquipmentPosition(Equipment equipment, Transform equipmentPlacement) {
 
             equipment.transform.SetParent(equipmentPlacement, false);
