@@ -2,13 +2,27 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
+
+
+# Ignore Everything
+*
+
+# Except
+
+!Arena_Prototype/
+!Arena_Prototype/Assets/
+!Arena_Prototype/Assets/Scripts/
+!Arena_Prototype/Assets/Scripts/*/
+!Arena_Prototype/Assets/Scripts/*/*
+!Arena_Prototype/Assets/Scripts/*/*/
+!Arena_Prototype/Assets/Scripts/*/*/*
+!Arena_Prototype/Assets/Scripts/*/*/*/
+!Arena_Prototype/Assets/Scripts/*/*/*/*
+
+
+# Except file types
+
+!*.cs
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -46,6 +60,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.meta
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -70,3 +85,21 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Ignore files
+Arena_Prototype/Assets/Scripts/TestStats.cs
+Arena_Prototype/Assets/Scripts/TestCirclePoints.cs
+Arena_Prototype/Assets/Scripts/System/Game Event/GameEventListener.cs
+Arena_Prototype/Assets/Scripts/System/Game Event/GameEvent.cs
+Arena_Prototype/Assets/Scripts/NPC/States/StatSearch.cs
+Arena_Prototype/Assets/Scripts/NPC/States/StateManager.cs
+Arena_Prototype/Assets/Scripts/NPC/States/StateChase.cs
+Arena_Prototype/Assets/Scripts/NPC/States/IAIStateManager.cs
+Arena_Prototype/Assets/Scripts/NPC/States/IAIState.cs
+Arena_Prototype/Assets/Scripts/NPC/States/AbstractState.cs
+Arena_Prototype/Assets/Scripts/NPC/IAIStateMachine.cs
+Arena_Prototype/Assets/Scripts/NPC/AIStateMachine.cs
+Arena_Prototype/Assets/Scripts/NPC/AIManager.cs
+Arena_Prototype/Assets/Scripts/Editor/TestArcEditor.cs
+Arena_Prototype/Assets/Scripts/Creatures/Player/PlayerMovement.cs
+Arena_Prototype/Assets/Scripts/Creatures/Movement/LocomotionStatePattern.cs
