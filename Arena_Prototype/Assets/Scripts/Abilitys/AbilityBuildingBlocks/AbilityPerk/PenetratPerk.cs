@@ -4,8 +4,7 @@ namespace RPG.Abilitys.Perk {
     /// <summary>
     /// Prevents FormBehavior from destroying itself a amount of times
     /// </summary>
-    [AttributeAbilityRequirements(AttributeAbilityRequirements.Gatekeep.Include, 
-        abstractForms: new System.Type[] {typeof(Form.FormProjectile)})]
+    [AttributeAbilityIncludeRequirements(abstractForms: new System.Type[] {typeof(Form.FormProjectile)})]
     //Projectile will be prevented from being destroyed after colliding with a creature
     public class PenetratPerk : AbstractAbilityPerk {
 
