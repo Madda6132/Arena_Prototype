@@ -132,6 +132,7 @@ namespace RPG {
             return list[randomIndex];
         }
 
+        public static int LayerMaskBitIndex(int index) => 1 << index;
         public static bool AlmostEqual(this float x, float y) => Math.Abs(x - y) < 0.001f;
 
         public static bool CheckEnumValues<T>(this T requirements, T values) where T : Enum {

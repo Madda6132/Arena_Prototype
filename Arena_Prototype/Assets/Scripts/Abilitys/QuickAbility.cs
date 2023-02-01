@@ -14,8 +14,7 @@ namespace RPG.Abilitys {
 
             //Equipment sends element, energy
             Abilitys.Form.FormProjectile form = new(energy);
-
-            ability = new(abilityElement, energy, new Targeting.TargetingHitbox(energy), form);
+            ability = new(energy, abilityElement, TargetType.Direction, targeting: new Targeting.TargetingRaycast(energy), form: form);
         }
 
         public AbilityPerformAction GetAbilityAction(Creature creature, IAbilityTargetingObject targetingInfo) {

@@ -12,7 +12,6 @@ namespace RPG.Abilitys.Form {
         public override AbstractFormBehavior StartFormCreature(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, GameObject creature) {
 
-            Debug.Log("Explosion created");
             BehaviorExplosion explosionObject = CreateForm<BehaviorExplosion>(abilityBaseInfo, startPosition, forwardDirection);
             explosionObject.StartForm(abilityBaseInfo, this);
             return explosionObject;
@@ -20,7 +19,7 @@ namespace RPG.Abilitys.Form {
 
         public override AbstractFormBehavior StartFromDirection(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, Vector3 direction) {
-            Debug.Log("Explosion created");
+            
             BehaviorExplosion explosionObject = CreateForm<BehaviorExplosion>(abilityBaseInfo, startPosition, forwardDirection); ;
             explosionObject.StartForm(abilityBaseInfo, this);
             return explosionObject;
@@ -28,7 +27,7 @@ namespace RPG.Abilitys.Form {
 
         public override AbstractFormBehavior StartFromPosition(Ability.AbilityBaseInfo abilityBaseInfo, 
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, Vector3 position) {
-            Debug.Log("Explosion created");
+            
             BehaviorExplosion explosionObject = CreateForm<BehaviorExplosion>(abilityBaseInfo, position, forwardDirection);
             explosionObject.StartForm(abilityBaseInfo, this);
             return explosionObject;
@@ -38,8 +37,8 @@ namespace RPG.Abilitys.Form {
 
         protected override void SetTargetTypeAndCost() {
 
-            TargetType[] randomTargetList = new TargetType[] { TargetType.Object, TargetType.Position, TargetType.Direction };
-            targetingType = randomTargetList[UnityEngine.Random.Range(1, randomTargetList.Length)];
+            //TargetType[] randomTargetList = new TargetType[] { TargetType.Object, TargetType.Position, TargetType.Direction };
+            //targetingType = randomTargetList[UnityEngine.Random.Range(1, randomTargetList.Length)];
 
             procentAddedCost = 0.2f;
         }

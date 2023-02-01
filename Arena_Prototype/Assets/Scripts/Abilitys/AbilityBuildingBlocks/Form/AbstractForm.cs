@@ -8,8 +8,6 @@ namespace RPG.Abilitys.Form {
 
         public float EnergyCost => procentAddedCost;
         protected float procentAddedCost = 0f;
-        //FormObject projectile, Explosion, 
-        protected TargetType targetingType;
         protected int energy;
 
 
@@ -29,8 +27,6 @@ namespace RPG.Abilitys.Form {
         public abstract AbstractFormBehavior StartFromDirection(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, Vector3 direction);
 
-
-        public TargetType GetTargetingType => targetingType;
 
         /*---Protected---*/
 

@@ -47,7 +47,7 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
 
     protected bool _IsLifeIsEnding = false;
 
-    protected float _LifeTime = 15f;
+    protected float _LifeTime = 6f;
     float _TimePast = 0;
     float _TickTracker = 0f;
 
@@ -61,21 +61,7 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
         //Ability get any and all perks and sub abilitys
         foreach (var subAbility in abilityBaseInfo.ability.GetSubAbilitys) {
 
-            switch (subAbility.GetCallState) {
-                case SubAbilityState.SubAbilityCall.Start:
-                    SubToOnStartForm(subAbility.Perform);
-                    break;
-                case SubAbilityState.SubAbilityCall.Target:
-                    SubToOnTriggeredForm(subAbility.PerformTarget);
-                    break;
-                case SubAbilityState.SubAbilityCall.Tick:
-                    SubToOnTickForm(subAbility.Perform);
-                    break;
-                default:
-                case SubAbilityState.SubAbilityCall.End:
-                    SubToOnEndForm(subAbility.Perform);
-                    break;
-            }
+            subAbility.SubToCall(this);
         }
 
         ActionDictinary[typeof(IFilter)] = new();
@@ -123,8 +109,8 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
     //Override to change alter the direction of the Form
     public virtual void Redirect(Vector3 forwardDirection, Vector3 upDirection) { }
     //Repeat effect
-    public virtual AbstractFormBehavior Repeat() =>
-        form.StartFromPosition(abilityBaseInfo, transform.position, transform.forward, transform.up, transform.position);
+    public virtual AbstractFormBehavior[] Repeat() =>
+        abilityBaseInfo.ability.PerformAbilityAtTargeting(abilityBaseInfo, transform.position, transform.forward, transform.up).ToArray();
     
     /// <summary>
     /// Get random positions from the Form Behavior
@@ -319,7 +305,7 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
         directionListeners?.Invoke(this, directions);
 
 
-        OnTriggeredForm.Invoke(this, targets);
+        OnTriggeredForm?.Invoke(this, targets);
     }
     #endregion
 

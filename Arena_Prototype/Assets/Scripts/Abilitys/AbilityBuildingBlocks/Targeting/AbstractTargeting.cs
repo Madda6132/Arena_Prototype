@@ -40,8 +40,14 @@ namespace RPG.Abilitys.Targeting {
             performanceAction.SetUnsubAction(UnsubToPerformAction);
             performanceAction.SetAnimationInfo(animationInfo);
 
+            //New Action to circumvent return value
+            Action<Ability.AbilityBaseInfo, Vector3, Vector3, Vector3> perAction = (abilityBaseInfo, startPos, forwardDir, upDir) => {
+                Ability ability = performanceAction.Ability;
+                ability.PerformAbilityAtTargeting(abilityBaseInfo, startPos, forwardDir, upDir);
+            };
+
             //Set the action to take when the attack animation triggers
-            performanceAction.SetPerformAbility(performanceAction.Ability.PerformAbilityAtTargeting);
+            performanceAction.SetPerformAbility(perAction);
         }
 
         
@@ -65,7 +71,6 @@ namespace RPG.Abilitys.Targeting {
             AnimatorHandler animatiorHandler = user.ActionHandler.AnimatorHandler;
             animatiorHandler.AddActionTriggerListener(performAbility);
             
-            Debug.Log("StartAction on " + user.gameObject.name);
         }
 
         /// <summary>
@@ -77,7 +82,6 @@ namespace RPG.Abilitys.Targeting {
             AnimatorHandler animatiorHandler = user.ActionHandler.AnimatorHandler;
             animatiorHandler.RemoveActionTriggerListener(performAbility);
 
-            Debug.Log("EndAction on " + user.gameObject.name);
         }
     }
 }

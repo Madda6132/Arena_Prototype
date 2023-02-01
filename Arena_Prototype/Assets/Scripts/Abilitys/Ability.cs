@@ -25,8 +25,8 @@ namespace RPG.Abilitys {
     /// </summary>
     public class Ability : IAbility{
 
-        const int MILESTONE_SUBABILITY = 500;
-        const int MILESTONE_PERK = 750;
+        const int MILESTONE_SUBABILITY = 250;
+        const int MILESTONE_PERK = 400;
 
         float _AbilityRange = 1f;
 
@@ -36,12 +36,12 @@ namespace RPG.Abilitys {
         Effect.AbstractAbilityEffect[] _Effects;
 
         //Minor
-        List<SubAbilityState> _SubAbilityStates = new();
+        List<SubAbility> _SubAbilitys = new();
         List<Perk.AbstractAbilityPerk> _AbilityPerks = new();
 
 
         //What type of targeting the abstractTargeting should get
-        public TargetType TargetingType { get; private set; } = TargetType.Object;
+        public TargetType _TargetingType { get; private set; } = TargetType.Object;
 
         //Determines the options the ability has when generating random Targeting/Form/Effects
         AbilityElement _AbilityElement;
@@ -51,18 +51,24 @@ namespace RPG.Abilitys {
         //---!TODO!---
         //Requirements // Are only for the first targeting and class? Ex No channels
         //Get Energy cost
-        //Generate Random SubAbility
 
-    #region Ability Creation
 
         
-        public Ability(AbilityElement element, int energy, Targeting.AbstractTargeting targeting = null, 
-            Form.AbstractForm form = null, Effect.AbstractAbilityEffect[] effects = null) {
+        public Ability(int energy, AbilityElement element, TargetType TargetingType = TargetType.NONE, 
+            Targeting.AbstractTargeting targeting = null, Form.AbstractForm form = null, Effect.AbstractAbilityEffect[] effects = null,
+            Perk.AbstractAbilityPerk[] perk = null, SubAbility[] subAbility = null) {
 
+            _AbilityEnergyCost = energy;
             _AbilityElement = element;
-            
-            //Set range from targeting object
-            FillAbility(energy, targeting, form, effects);
+
+
+            _TargetingType = TargetingType != TargetType.NONE ? TargetingType : GenerateTargetType();
+            this._Targeting = targeting != null ? targeting : GenerateTargeting();
+            this._Form = form != null ? form : GenerateForm();
+            this._Effects = effects != null ? effects : GenerateEffects();
+
+            _AbilityPerks = perk != null ? perk.ToList() : GeneratePerks().ToList();
+            _SubAbilitys = subAbility != null ? subAbility.ToList() : GenerateSubAbility().ToList();
         }
 
 
@@ -70,7 +76,7 @@ namespace RPG.Abilitys {
         public float GetRange(int energyCost) { 
             
             //Input energy into Targeting and Form to return range
-
+            //Should start with getting range from targeting
             return _AbilityRange; 
         }
 
@@ -79,17 +85,18 @@ namespace RPG.Abilitys {
 
             int energyCost = _AbilityEnergyCost;
 
-            foreach (var subAbility in _SubAbilityStates) {
+            foreach (var subAbility in _SubAbilitys) {
                 //energyCost += subAbility.GetCost();
             }
 
             return energyCost; 
         }
-         
-        public void AddSubAbilities(SubAbilityState state) => _SubAbilityStates.Add(state);
+
+
+        public void AddSubAbilities(SubAbility state) => _SubAbilitys.Add(state);
         public void AddAbilityPerk(Perk.AbstractAbilityPerk perk) => _AbilityPerks.Add(perk);
 
-        public SubAbilityState[] GetSubAbilitys => _SubAbilityStates.ToArray();
+        public SubAbility[] GetSubAbilitys => _SubAbilitys.ToArray();
         public Perk.AbstractAbilityPerk[] GetPerks => _AbilityPerks.ToArray();
         public Targeting.AbstractTargeting GetTargeting => _Targeting;
         public Form.AbstractForm GetForm => _Form;
@@ -102,45 +109,48 @@ namespace RPG.Abilitys {
         /// <param name="abilityBaseInfo"> Information about startPoint, the user Creature, and energy </param>
         /// <param name="forwardDirection"> Usually, the direction the creature is facing. </param>
         /// <param name="upDirection"> The up direction for the ability.  </param>
-        public void PerformAbilityAtTargeting(AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, 
+        public AbstractFormBehavior[] PerformAbilityAtTargeting(AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, 
             Vector3 forwardDirection, Vector3 upDirection) {
 
             Debug.DrawRay(abilityBaseInfo.startPosition, forwardDirection, Color.red, 5f);
-            
+
+            List<AbstractFormBehavior> _BehaviorList = new List<AbstractFormBehavior>();
+
             //Check forms targeting Preference
             //Perform Targeting
             //Perform form towards each target
-            switch (TargetingType) {
+            switch (_TargetingType) {
                 default:
                 case TargetType.Object:
                     foreach (var target in _Targeting.TargetObject(abilityBaseInfo, forwardDirection, upDirection)) {
-                        PerformAbilityAtFormCreature(abilityBaseInfo, startPosition, forwardDirection, upDirection, target);
+                        _BehaviorList.Add(PerformAbilityAtFormCreature(abilityBaseInfo, startPosition, forwardDirection, upDirection, target));
                     }
                     break;
                 case TargetType.Direction:
                     foreach (var target in _Targeting.TargetDirection(abilityBaseInfo, forwardDirection, upDirection)) {
-                        PerformAbilityAtFormDirection(abilityBaseInfo, startPosition, forwardDirection, upDirection, target);
+                        _BehaviorList.Add(PerformAbilityAtFormDirection(abilityBaseInfo, startPosition, forwardDirection, upDirection, target));
                     }
                     break;
                 case TargetType.Position:
                     foreach (var target in _Targeting.TargetPosition(abilityBaseInfo, forwardDirection, upDirection)) {
-                        PerformAbilityAtFormPosition(abilityBaseInfo, startPosition, forwardDirection, upDirection, target);
+                        _BehaviorList.Add(PerformAbilityAtFormPosition(abilityBaseInfo, startPosition, forwardDirection, upDirection, target));
                     }
                     break;
                 
             }
-            
+
+            return _BehaviorList.ToArray();
 
         }
 
         //Passing the Targeting element by passing the targets directly to form
-        public void PerformAbilityAtFormCreature(AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, Vector3 forwardDirection, 
+        public AbstractFormBehavior PerformAbilityAtFormCreature(AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, Vector3 forwardDirection, 
             Vector3 upDirection, GameObject targetCreature) => 
-            _Form.StartFormCreature(abilityBaseInfo, startPosition, forwardDirection, upDirection, targetCreature);
-        public void PerformAbilityAtFormPosition(AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, Vector3 forwardDirection,
+              _Form.StartFormCreature(abilityBaseInfo, startPosition, forwardDirection, upDirection, targetCreature);
+        public AbstractFormBehavior PerformAbilityAtFormPosition(AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, Vector3 forwardDirection,
             Vector3 upDirection, Vector3 position) => 
             _Form.StartFromPosition(abilityBaseInfo, startPosition, forwardDirection, upDirection, position);
-        public void PerformAbilityAtFormDirection(AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, Vector3 forwardDirection,
+        public AbstractFormBehavior PerformAbilityAtFormDirection(AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, Vector3 forwardDirection,
             Vector3 upDirection, Vector3 dir) => 
             _Form.StartFromDirection(abilityBaseInfo, startPosition, forwardDirection, upDirection, dir);
 
@@ -165,37 +175,39 @@ namespace RPG.Abilitys {
 
         /*---Private---*/
 
-        private void FillAbility(int energy, Targeting.AbstractTargeting targeting = null,
-            Form.AbstractForm form = null, Effect.AbstractAbilityEffect[] effects = null) {
+        #region Ability Creation
 
-            _AbilityEnergyCost = energy;
+        private TargetType GenerateTargetType() {
 
-            //Randomize type for targeting
             int enumIndex = UnityEngine.Random.Range(1, Enum.GetValues(typeof(TargetType)).Length);
-            TargetingType = (TargetType)enumIndex;
 
-            this._Targeting = targeting != null ? targeting : GetRandomTargeting();
-            this._Form = form != null ? form : GetRandomForm();
-            this._Effects = effects != null ? effects : GetRandomEffects();
-
-            int amountOfSubAbility = energy / MILESTONE_SUBABILITY;
-            for (int i = 0; i < amountOfSubAbility; i++) {
-                AddRandomSubAbilityState(energy);
-            }
-
-            int amountOfperk = energy / MILESTONE_PERK;
-            for (int i = 0; i < amountOfperk; i++) {
-                AddRandomPerk();
-            }
-
-            Debug.Log("Target: " + _Targeting.ToString());
-            Debug.Log("Form: " + _Form.ToString());
-            foreach (var effect in _Effects) {
-                Debug.Log("Effects: " + effect.ToString());
-            } 
-            
+            return (TargetType)enumIndex;
         }
-        private Form.AbstractForm GetRandomForm() {
+
+        private IEnumerable<Perk.AbstractAbilityPerk> GeneratePerks() {
+
+            int amountOfperk = _AbilityEnergyCost / MILESTONE_PERK;
+            for (int i = 0; i < amountOfperk; i++) {
+
+                Perk.AbstractAbilityPerk perk = GetRandomPerk();
+
+                if(perk != null) yield return perk;
+
+            }
+        }
+
+        private IEnumerable<SubAbility> GenerateSubAbility() {
+
+
+            int amountOfSubAbility = _AbilityEnergyCost / MILESTONE_SUBABILITY;
+            for (int i = 0; i < amountOfSubAbility; i++) {
+
+                yield return GetRandomSubAbility(_AbilityEnergyCost);
+
+            }
+        }
+
+        private Form.AbstractForm GenerateForm() {
 
             //Assembly gets all available types from it that is classes and from the namespace
             var list = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.BaseType != null &&
@@ -205,7 +217,7 @@ namespace RPG.Abilitys {
 
             return form;
         }
-        private Targeting.AbstractTargeting GetRandomTargeting(){
+        private Targeting.AbstractTargeting GenerateTargeting(){
 
             //Assembly gets all available types from it that is classes and from the namespace
             var list = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.BaseType != null &&
@@ -215,7 +227,7 @@ namespace RPG.Abilitys {
 
             return targeting; 
         }
-        private Effect.AbstractAbilityEffect[] GetRandomEffects() {
+        private Effect.AbstractAbilityEffect[] GenerateEffects() {
              
             //Assembly gets all available types from it that is classes and from the namespace
             var list = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.BaseType != null &&
@@ -259,17 +271,17 @@ namespace RPG.Abilitys {
 
         private bool RequirementCheck(Type type) {
              
-            Attribute[] attributes = type.GetCustomAttributes(typeof(AttributeAbilityRequirements)).ToArray();
+            Attribute[] attributes = type.GetCustomAttributes(typeof(AbstractAttributeAbilityRequirements)).ToArray();
 
 
-            bool requirementsMeet = (attributes.Where(x => ((AttributeAbilityRequirements)x).CheckRequirements(this)).ToArray() !=
+            bool requirementsMeet = (attributes.Where(x => ((AbstractAttributeAbilityRequirements)x).CheckRequirements(this)).ToArray() !=
                 Array.Empty<Attribute>());
 
             return (attributes.Count() == 0) || requirementsMeet;
         }
 
 
-        private void AddRandomPerk() {
+        private Perk.AbstractAbilityPerk GetRandomPerk() {
 
             var list = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.BaseType != null &&
             x.BaseType == typeof(Perk.AbstractAbilityPerk)).ToList();
@@ -277,20 +289,21 @@ namespace RPG.Abilitys {
             //Remove duplicates
             _AbilityPerks.ForEach(perk => list.Remove(perk.GetType())); 
               
-            if (list.Count < 1) return;
+            if (list.Count < 1) return null;
 
             Perk.AbstractAbilityPerk newPerk = CreateRandomAllowedType<Perk.AbstractAbilityPerk>(list, _AbilityEnergyCost);
 
             //Add perk
-            AddAbilityPerk(newPerk); 
-            
+            return newPerk; 
+             
         }
 
-        private void AddRandomSubAbilityState(int energy) {
+        private SubAbility GetRandomSubAbility(int energy) {
 
-            
             //Get Random subAbility
-            //Create subAbility (Ability Element (energy - 100) * 0.75f)
+            int _SubAbilityCreationCost = (int)((energy - 100) * 0.75f);
+
+            return new(_SubAbilityCreationCost, _AbilityElement);
         }
 
         #endregion

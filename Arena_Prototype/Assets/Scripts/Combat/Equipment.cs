@@ -55,13 +55,12 @@ namespace RPG.Inventory {
         private void Awake() {
             //Can be chanced to a SerializeField object instead of getting a collider on the object
             TargetingCollider = GetComponent<Collider>();
-
+            
             //Use this when setting equipment
             Collider userCollider = GetComponentInParent<Creature>().GetComponent<Collider>();
             Physics.IgnoreCollision(TargetingCollider, userCollider, true);
 
-            Debug.Log("Create quick ability whit Hit box");
-            quickAbility = new(AbilityElement.Fire, 100);
+            quickAbility = new(AbilityElement.Fire, 400);
 
             Debug.Log("Create ChannelAbility");
             //channelAbility = new() Not made yet

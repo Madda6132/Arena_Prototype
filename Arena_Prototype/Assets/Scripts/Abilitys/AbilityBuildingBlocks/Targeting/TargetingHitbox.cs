@@ -7,7 +7,7 @@ namespace RPG.Abilitys.Targeting {
     /// <summary>
     /// Uses a collider as a hit box to find targets
     /// </summary>
-    [AttributeAbilityRequirements(AttributeAbilityRequirements.Gatekeep.Exclude)]
+    [AttributeAbilityExcludeRequirements()]
     public class TargetingHitbox : AbstractTargeting {
         public TargetingHitbox(int energy) : base(energy) {
 
@@ -89,7 +89,7 @@ namespace RPG.Abilitys.Targeting {
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, GameObject target) {
 
             Ability ability = abilityBaseInfo.ability;
-            switch (ability.TargetingType) {
+            switch (ability._TargetingType) {
                 default:
                 case TargetType.Object:
                     ability.PerformAbilityAtFormCreature(abilityBaseInfo, startPosition, forwardDirection, upDirection, target);
