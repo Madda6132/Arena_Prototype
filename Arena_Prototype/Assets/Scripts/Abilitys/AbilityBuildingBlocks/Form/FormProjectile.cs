@@ -16,26 +16,26 @@ namespace RPG.Abilitys.Form {
 
             Vector3 direction = creature.TryGetComponent(out IDamageable _Damageable) ? (_Damageable.TargetMark.position - startPosition).normalized : (creature.transform.position - startPosition).normalized;
 
-            BehaviorProjectile projectileObject = CreateForm<BehaviorProjectile>(abilityBaseInfo, startPosition, direction);
-            projectileObject.StartForm(abilityBaseInfo, this);
+            BehaviorProjectile projectileObject = GetObjectBehavior<BehaviorProjectile>(abilityBaseInfo, startPosition, direction);
+            projectileObject.StartForm(abilityBaseInfo);
             return projectileObject; 
         }
 
         public override AbstractFormBehavior StartFromDirection(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, Vector3 direction) {
 
-            BehaviorProjectile projectileObject = CreateForm<BehaviorProjectile>(abilityBaseInfo, startPosition, direction);
-            projectileObject.StartForm(abilityBaseInfo, this);
+            BehaviorProjectile projectileObject = GetObjectBehavior<BehaviorProjectile>(abilityBaseInfo, startPosition, direction);
+            projectileObject.StartForm(abilityBaseInfo);
             return projectileObject;
         }
 
         public override AbstractFormBehavior StartFromPosition(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, Vector3 position) {
 
-            BehaviorProjectile projectileObject = CreateForm<BehaviorProjectile>(abilityBaseInfo, startPosition, 
+            BehaviorProjectile projectileObject = GetObjectBehavior<BehaviorProjectile>(abilityBaseInfo, startPosition, 
                 (startPosition - position).normalized);
 
-            projectileObject.StartForm(abilityBaseInfo, this);
+            projectileObject.StartForm(abilityBaseInfo);
             return projectileObject; 
         }
 

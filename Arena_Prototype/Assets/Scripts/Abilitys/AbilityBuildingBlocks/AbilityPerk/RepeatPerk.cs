@@ -12,7 +12,7 @@ namespace RPG.Abilitys.Perk {
 
         public RepeatPerk(int energy) : base(energy) {
 
-            repeatAmountCount = Random.Range(1, 5);
+            repeatAmountCount = Random.Range(1, 3);
         }
 
         public override object GetPerkStorage(AbstractFormBehavior formBehavior) =>

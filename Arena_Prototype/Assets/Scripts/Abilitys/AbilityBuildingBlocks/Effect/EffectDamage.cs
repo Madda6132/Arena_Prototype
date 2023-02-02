@@ -14,7 +14,7 @@ namespace RPG.Abilitys.Effect {
         int damage = 1; 
 
 
-        public EffectDamage(int energy) {
+        public EffectDamage(int energy):base(energy) {
 
             float energyScale = Random.Range(2f, 11f)/10;
 

@@ -259,7 +259,7 @@ namespace RPG.Abilitys {
             return effects.ToArray();
         }
 
-        private AbstractType CreateRandomAllowedType<AbstractType>(List<Type> typeList, int energy) {
+        private AbstractType CreateRandomAllowedType<AbstractType>(List<Type> typeList, int energy) where AbstractType : class{
 
             var filterList = typeList.Where(x => RequirementCheck(x)).ToList();
 

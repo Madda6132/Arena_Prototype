@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RPG.Abilitys.Form {
@@ -10,6 +11,8 @@ namespace RPG.Abilitys.Form {
         protected float procentAddedCost = 0f;
         protected int energy;
 
+        AbstractFormBehavior _FormBehavior;
+        Queue<AbstractFormBehavior> _FormBehaviorPool = new();
 
         public AbstractForm(int energy) {
 
@@ -18,8 +21,6 @@ namespace RPG.Abilitys.Form {
             SetTargetTypeAndCost();
         }
 
-        
-
         public abstract AbstractFormBehavior StartFormCreature(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, GameObject creature);
         public abstract AbstractFormBehavior StartFromPosition(Ability.AbilityBaseInfo abilityBaseInfo,
@@ -27,6 +28,7 @@ namespace RPG.Abilitys.Form {
         public abstract AbstractFormBehavior StartFromDirection(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, Vector3 direction);
 
+        public void AddToPool(AbstractFormBehavior behavior) => _FormBehaviorPool.Enqueue(behavior);
 
         /*---Protected---*/
 
@@ -36,13 +38,39 @@ namespace RPG.Abilitys.Form {
         /// </summary>
         protected abstract void SetTargetTypeAndCost();
 
-        protected Behavior CreateForm<Behavior>(Ability.AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, 
+        protected Behavior GetObjectBehavior<Behavior>(Ability.AbilityBaseInfo abilityBaseInfo, Vector3 startPosition, 
             Vector3 forwardDirection) where Behavior : AbstractFormBehavior {
 
-            GameObject gameObj = SOLibraryForms.GetForm<Behavior>(abilityBaseInfo.ability.GetElement).gameObject;
-            Quaternion rotation = Quaternion.FromToRotation(gameObj.transform.forward, forwardDirection);
-            return GameObject.Instantiate(gameObj, startPosition, rotation).GetComponent<Behavior>();
+            if (_FormBehaviorPool.Count == 0) FillFormBehaviorPool<Behavior>(abilityBaseInfo.ability);
+
+            GameObject gameObj = _FormBehaviorPool.Dequeue().gameObject;
+            gameObj.transform.position = startPosition;
+            gameObj.transform.rotation = Quaternion.LookRotation(forwardDirection);
+            return gameObj.GetComponent<Behavior>();
         }
+
+        /*---Private---*/
+
+        private void FillFormBehaviorPool<Behavior>(Ability ability) where Behavior : AbstractFormBehavior {
+
+            if (!_FormBehavior) {
+
+                GameObject prefabGameObj = SOLibraryForms.GetForm<Behavior>(ability.GetElement).gameObject;
+                prefabGameObj.SetActive(false);
+                _FormBehavior = GameObject.Instantiate(prefabGameObj).GetComponent<Behavior>();
+                Core.ContainerGameObject.AddToContainer<Behavior>(_FormBehavior.gameObject);
+            }
+
+            //Fill queue with 5 objects
+            for (int i = 0; i < 5; i++) {
+
+                AbstractFormBehavior formBehavior = GameObject.Instantiate(_FormBehavior).GetComponent<Behavior>();
+                Core.ContainerGameObject.AddToContainer<Behavior>(formBehavior.gameObject);
+                formBehavior.FillSettings(ability, this);
+                _FormBehaviorPool.Enqueue(formBehavior);
+            }
+        }
+
     }
 }
 

@@ -12,6 +12,8 @@ namespace RPG.Abilitys.Targeting {
         public float EnergyCost => procentAddedCost;
         protected float procentAddedCost = 0f;
 
+        protected int layerMaskIndex = Utilitys.LayerMaskBitIndex(LayerMask.NameToLayer("TargetbleObject"));
+
         //Swing for now, can randomize for other?
         protected UtilityAnimations.AnimationInfo animationInfo = UtilityAnimations.AttackSwing;
         public AbstractTargeting(int energy) {

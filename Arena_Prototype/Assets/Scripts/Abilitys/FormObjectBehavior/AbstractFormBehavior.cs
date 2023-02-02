@@ -52,20 +52,16 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
     float _TickTracker = 0f;
 
     //Once the startup is finished call, start form
-    public virtual void StartForm(Ability.AbilityBaseInfo abilityBaseInfo, AbstractForm form) {
+    public virtual void StartForm(Ability.AbilityBaseInfo abilityBaseInfo) {
 
-        this.form = form;
         this.abilityBaseInfo = abilityBaseInfo;
 
-        _TickTracker = tickTimer;
-        //Ability get any and all perks and sub abilitys
-        foreach (var subAbility in abilityBaseInfo.ability.GetSubAbilitys) {
-
-            subAbility.SubToCall(this);
+        //Clear Lists
+        foreach (var item in ActionDictinary) {
+            item.Value.Clear();
         }
 
-        ActionDictinary[typeof(IFilter)] = new();
-        ActionDictinary[typeof(IActionMessageListener)] = new();
+        //Fill lists
         foreach (var perk in abilityBaseInfo.ability.GetPerks) {
             object perkStorage = perk.GetPerkStorage(this);
             switch (perkStorage) {
@@ -80,8 +76,32 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
             }
         }
 
+        _IsLifeIsEnding = false;
+
+        _TimePast = 0;
+        _TickTracker = tickTimer;
+        
+        gameObject.SetActive(true);
+
+        OnStartForm.Invoke(this, GetStartPosition());
+
+    }
+    
+    public void FillSettings(Ability ability, AbstractForm form) {
+
+        this.form = form;
+
+        //Ability get any and all perks and sub abilitys
+        foreach (var subAbility in ability.GetSubAbilitys) {
+
+            subAbility.SubToCall(this);
+        }
+
+        ActionDictinary[typeof(IFilter)] = new();
+        ActionDictinary[typeof(IActionMessageListener)] = new();
+
         //Effects happens when the form sends info
-        foreach (var effect in abilityBaseInfo.ability.GetEffects()) {
+        foreach (var effect in ability.GetEffects()) {
 
             switch (effect) {
                 case IGameObjectEffect:
@@ -98,10 +118,8 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
             }
         }
 
-        OnStartForm.Invoke(this, GetStartPosition());
-
     }
-    
+
     public Creature GetUser => abilityBaseInfo.user;
     public int GetEnergy => abilityBaseInfo.energy;
     public void InteruptAction() => isInteruptingAction = true;
@@ -232,7 +250,8 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
         }
 
         OnEndForm?.Invoke(this, GetEndPosition());
-        Destroy(gameObject, 1f);
+        form.AddToPool(this);
+        gameObject.SetActive(false);
     }
 
     // Senders send information to triggered listeners
@@ -336,6 +355,7 @@ public abstract class AbstractFormBehavior : MonoBehaviour, IFormBehavior {
 
                 ((IActionMessageListener)listener).Perform(this, FormUtilityMessages.TICK);
             }
+
             OnTickForm?.Invoke(this, GetTickPosition());
         }
 

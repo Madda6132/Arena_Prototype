@@ -4,6 +4,7 @@ namespace RPG.Abilitys.Effect {
     /// </summary>
     public abstract class AbstractAbilityEffect {
 
+        public AbstractAbilityEffect(int energy) { }
         //Empty ATM
         //Used to store effects in a list
     }

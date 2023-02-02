@@ -29,8 +29,7 @@ namespace RPG.Abilitys.Targeting {
 
         public override GameObject[] TargetObject(Ability.AbilityBaseInfo abilityBaseInfo, Vector3 forwardDirection, Vector3 upDirection) {
             
-            int layerIndex = Utilitys.LayerMaskBitIndex(LayerMask.NameToLayer("TargetbleObject"));
-            Collider[] colliders = Physics.OverlapSphere(abilityBaseInfo.startPosition, _EmissionRadius, layerIndex);
+            Collider[] colliders = Physics.OverlapSphere(abilityBaseInfo.startPosition, _EmissionRadius, layerMaskIndex);
 
             return colliders.Select(x => x.gameObject).ToArray();
         }

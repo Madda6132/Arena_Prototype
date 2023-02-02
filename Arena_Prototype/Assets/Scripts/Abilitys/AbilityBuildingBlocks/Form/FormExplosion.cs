@@ -12,24 +12,24 @@ namespace RPG.Abilitys.Form {
         public override AbstractFormBehavior StartFormCreature(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, GameObject creature) {
 
-            BehaviorExplosion explosionObject = CreateForm<BehaviorExplosion>(abilityBaseInfo, startPosition, forwardDirection);
-            explosionObject.StartForm(abilityBaseInfo, this);
+            BehaviorExplosion explosionObject = GetObjectBehavior<BehaviorExplosion>(abilityBaseInfo, startPosition, forwardDirection);
+            explosionObject.StartForm(abilityBaseInfo);
             return explosionObject;
         }
 
         public override AbstractFormBehavior StartFromDirection(Ability.AbilityBaseInfo abilityBaseInfo,
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, Vector3 direction) {
             
-            BehaviorExplosion explosionObject = CreateForm<BehaviorExplosion>(abilityBaseInfo, startPosition, forwardDirection); ;
-            explosionObject.StartForm(abilityBaseInfo, this);
+            BehaviorExplosion explosionObject = GetObjectBehavior<BehaviorExplosion>(abilityBaseInfo, startPosition, forwardDirection); ;
+            explosionObject.StartForm(abilityBaseInfo);
             return explosionObject;
         }
 
         public override AbstractFormBehavior StartFromPosition(Ability.AbilityBaseInfo abilityBaseInfo, 
             Vector3 startPosition, Vector3 forwardDirection, Vector3 upDirection, Vector3 position) {
             
-            BehaviorExplosion explosionObject = CreateForm<BehaviorExplosion>(abilityBaseInfo, position, forwardDirection);
-            explosionObject.StartForm(abilityBaseInfo, this);
+            BehaviorExplosion explosionObject = GetObjectBehavior<BehaviorExplosion>(abilityBaseInfo, position, forwardDirection);
+            explosionObject.StartForm(abilityBaseInfo);
             return explosionObject;
         }
 

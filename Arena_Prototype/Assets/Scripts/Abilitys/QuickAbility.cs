@@ -14,7 +14,8 @@ namespace RPG.Abilitys {
 
             //Equipment sends element, energy
             Abilitys.Form.FormProjectile form = new(energy);
-            ability = new(energy, abilityElement, TargetType.Direction, targeting: new Targeting.TargetingRaycast(energy), form: form);
+            Perk.AbstractAbilityPerk[] repPerk = { new Perk.RepeatPerk(energy)}; 
+            ability = new(energy, abilityElement, TargetType.Direction, targeting: new Targeting.TargetingRaycast(energy), form: form, perk: repPerk);
         }
 
         public AbilityPerformAction GetAbilityAction(Creature creature, IAbilityTargetingObject targetingInfo) {

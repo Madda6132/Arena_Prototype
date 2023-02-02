@@ -50,7 +50,7 @@ namespace RPG.Abilitys.Targeting {
             for (int i = 0; i < targets.Length; i++) {
 
                 RaycastHit hit;
-                if(Physics.Raycast(rays[i], out hit, MAX_RAYLENGTH)) {
+                if(Physics.Raycast(rays[i], out hit, MAX_RAYLENGTH, layerMaskIndex)) {
                     targets[i] = hit.point;
                 } else {
                     targets[i] = rays[i].GetPoint(MAX_RAYLENGTH);
@@ -74,9 +74,8 @@ namespace RPG.Abilitys.Targeting {
 
         private RaycastHit[] GetSphereCastHits(Ability.AbilityBaseInfo abilityBaseInfo, Vector3 forwardDirection) {
 
-            int layerIndex = Utilitys.LayerMaskBitIndex(LayerMask.NameToLayer("TargetbleObject"));
             RaycastHit[] hits;
-            hits = Physics.SphereCastAll(abilityBaseInfo.startPosition, raySphereSize, forwardDirection, 30f, layerIndex);
+            hits = Physics.SphereCastAll(abilityBaseInfo.startPosition, raySphereSize, forwardDirection, 30f, layerMaskIndex);
 
 
             if (hits == null) hits = new RaycastHit[0];

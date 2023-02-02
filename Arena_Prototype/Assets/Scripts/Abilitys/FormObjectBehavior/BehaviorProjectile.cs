@@ -13,8 +13,8 @@ namespace RPG.Abilitys.Form {
         float explosionRadius = 2f;
         int pointsAmount = 3;
 
-        public override void StartForm(Ability.AbilityBaseInfo abilityBaseInfo, AbstractForm form) {
-            base.StartForm(abilityBaseInfo, form);
+        public override void StartForm(Ability.AbilityBaseInfo abilityBaseInfo) {
+            base.StartForm(abilityBaseInfo);
 
             AddDestroyOnTrigger();
         }

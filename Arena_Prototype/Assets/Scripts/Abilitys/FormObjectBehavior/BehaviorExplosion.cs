@@ -1,8 +1,5 @@
 using RPG.Abilitys.Form;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using RPG.Creatures;
 using System.Linq;
 
 public class BehaviorExplosion : AbstractFormBehavior {
@@ -12,8 +9,8 @@ public class BehaviorExplosion : AbstractFormBehavior {
     int pointsAmount = 3;
 
 
-    public override void StartForm(RPG.Abilitys.Ability.AbilityBaseInfo abilityBaseInfo, AbstractForm form) {
-        base.StartForm(abilityBaseInfo, form);
+    public override void StartForm(RPG.Abilitys.Ability.AbilityBaseInfo abilityBaseInfo) {
+        base.StartForm(abilityBaseInfo);
 
 
         GameObject[] _Targets = Physics.OverlapSphere(transform.position, explosionRadius).Select(x => 
