@@ -33,6 +33,23 @@ public class EnemyManager : MonoBehaviour, ICreatureControler /*, ISaveable, IOb
     public LayerMask detectionLayer;
 
     [SerializeField] float rotationSpeed = 2;
+
+
+    public bool IsMoving {
+        get {
+            return _isMoving;
+        }
+        set {
+            _isMoving = value;
+            _MovingObserver.OnResultUpdate(_isMoving);
+        }
+    }
+
+    public ResultObserver<bool> MovingObserver => _MovingObserver;
+    ResultObserver<bool> _MovingObserver = new();
+
+    bool _isMoving = false;
+
     float timer = Mathf.Infinity;
     //float attackTimer = Mathf.Infinity;
     State currentState = State.Pattrol; 
@@ -67,7 +84,7 @@ public class EnemyManager : MonoBehaviour, ICreatureControler /*, ISaveable, IOb
                         hit.collider.tag != "Player") 
                         return;
 
-                    if (!targetTransform.GetComponent<Creature>().isAlive) return;
+                    if (!targetTransform.GetComponent<Creature>().IsAlive) return;
 
                      currentTarget = targetTransform;
                     //playerAttack.SetTarget(currentTarget);
@@ -183,7 +200,7 @@ public class EnemyManager : MonoBehaviour, ICreatureControler /*, ISaveable, IOb
 
     private void AttackBehaviour() {
         //Check if dead or board
-        if (!currentTarget.GetComponent<Creature>().isAlive || timer >= intresstTimer) {
+        if (!currentTarget.GetComponent<Creature>().IsAlive || timer >= intresstTimer) {
             ChangeState(State.Inspect);
             return;
         }

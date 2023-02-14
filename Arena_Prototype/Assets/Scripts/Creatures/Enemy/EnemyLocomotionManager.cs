@@ -13,6 +13,7 @@ public class EnemyLocomotionManager : MonoBehaviour
 
     NavMeshAgent navMeshAgent;
     AnimatorHandler animatorManager;
+    EnemyManager enemyManager;
 
     [Header("A.I behavior")]
     public float stoppingDistnace = 2; 
@@ -20,7 +21,6 @@ public class EnemyLocomotionManager : MonoBehaviour
     bool isInteractiong = false;
 
     float navMeshAgentStartSpeed = 6;
-
 
     public void HandleMoveToTarget(Vector3 pos, TravleSpeed travleSpeed = TravleSpeed.Run)
     {
@@ -53,6 +53,7 @@ public class EnemyLocomotionManager : MonoBehaviour
 
     private void Awake() {
 
+        enemyManager = GetComponent<EnemyManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         navMeshAgentStartSpeed = navMeshAgent.speed;
     }
@@ -78,7 +79,13 @@ public class EnemyLocomotionManager : MonoBehaviour
         Vector3 velocity = navMeshAgent.velocity;
         if (navMeshAgentStartSpeed != 0) velocity /= navMeshAgentStartSpeed;
          Vector3 localVelocity = transform.InverseTransformDirection(velocity);
-        
+
+        bool isMoving = (localVelocity != Vector3.zero);
+
+        //Check if enemy moving value changed
+        if (enemyManager.IsMoving != isMoving)
+            enemyManager.IsMoving = isMoving;
+
         animatorManager.UpdateAnimatorMovementValues(0, localVelocity.z, false);
     }
 }

@@ -4,6 +4,9 @@ namespace RPG.Creatures {
     /// </summary>
     public interface ICreatureControler {
 
+        public bool IsMoving { get; }
+        public ResultObserver<bool> MovingObserver { get; }
+
         public void DisabledControler();
         public void EnableControler();
 

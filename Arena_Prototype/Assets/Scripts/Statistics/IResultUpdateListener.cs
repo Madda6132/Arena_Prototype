@@ -1,4 +1,4 @@
-namespace RPG.Statistics {
+
     /// <summary>
     /// Listens to a statistic container value change
     /// </summary>
@@ -7,4 +7,3 @@ namespace RPG.Statistics {
 
         public void OnResultUpdate(Result result);
     }
-}

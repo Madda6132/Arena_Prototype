@@ -1,13 +1,15 @@
-using UnityEngine;
 using RPG.Creatures;
 
 namespace RPG.Actions {
     public interface IPerformAction {
 
+        public bool CauseBusy { get; }
+
         /// <summary>
-        /// Start performing the Action.
-        /// Returns the animation name.
-        /// </summary> 
+        /// Start performing the Action
+        /// </summary>
+        /// <param name="creature"></param>
+        /// <returns> Animation info </returns>
         public UtilityAnimations.AnimationInfo Perform(Creature creature);
 
         /// <summary>
@@ -17,12 +19,14 @@ namespace RPG.Actions {
         /// <summary>
         /// Check the requirements of the Action
         /// </summary>
-        public bool Requirements();
+        public (bool isAllowed, string errorMessage) CheckRequirements(Creature creature);
 
         /// <summary>
         /// Cancel the Action
         /// </summary>
         public void Cancel();
+
+        public void Update();
     }
 
 }

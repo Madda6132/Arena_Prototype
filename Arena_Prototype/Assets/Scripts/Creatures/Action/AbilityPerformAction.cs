@@ -2,6 +2,8 @@ using RPG.Creatures;
 using UnityEngine;
 using System;
 using RPG.Combat;
+using System.Collections.Generic;
+using RPG.Actions.Requirement;
 
 namespace RPG.Actions {
     /// <summary>
@@ -9,9 +11,11 @@ namespace RPG.Actions {
     /// </summary>
     public class AbilityPerformAction : IPerformAction {
 
-        Creature user;
-        int energy;
-        public IAbilityTargetingObject targetingInfo { get; private set; }
+        public bool CauseBusy => true;
+
+        protected Creature user;
+        protected int energy;
+        public IAbilityTargetingObject targetingInfo { get; private set; } 
         public Abilitys.Ability Ability { get; private set; }
         Func<Creature, Transform, (Vector3 forwardDirection, Vector3 upDirection)> getDirection;
         
@@ -25,16 +29,18 @@ namespace RPG.Actions {
         //unsubAction -> Ending the performance
         Action<Creature, AbilityPerformAction, Action> subAction;
         Action<Creature, AbilityPerformAction, Action> unsubAction;
+        Action<AbilityPerformAction, int, string> animationMessageListeners;
 
         //Animation information
-        UtilityAnimations.AnimationInfo animationInfo;
-
+        protected UtilityAnimations.AnimationInfo animationInfo;
+        protected IRequirementCollection requirementCollection;
 
         public AbilityPerformAction(Abilitys.Ability ability, Creature user, IAbilityTargetingObject equipment) {
             this.user = user;
             this.targetingInfo = equipment;
             this.Ability = ability;
 
+            requirementCollection = new HighPerformRequirements(Cancel);
             Ability.GetTargeting.FillPerformanceTargetingInfo(this);
         }
 
@@ -86,14 +92,23 @@ namespace RPG.Actions {
         /// </summary>
         /// <param name="unsubAction"> The subscriptions to remove </param>
         public void SetUnsubAction(Action<Creature, AbilityPerformAction, Action> unsubAction) => this.unsubAction = unsubAction;
-        
-        public void Cancel() {
 
+
+        public virtual void Update() {
+            
+        }
+
+        public virtual void Cancel() {
+
+            requirementCollection.IgnoreRequirements(user);
+            UnsubToAnimatorMessage(EndAnimationListener);
+            AnimationHandler.UnsubToAnimatorMessage(AnimationMessageListener);
+            user.ActionHandler.AnimatorHandler.PlayTargetAnimation("Empty", 1);
             StartUnsubAction();
         }
 
-        public void Finish() {
-            performAbility();
+        public virtual void Finish() {
+            PerfromAbility();
             Cancel();
         }
 
@@ -101,56 +116,26 @@ namespace RPG.Actions {
         /// Used for TargetingHitBox to receive targets being hit
         /// </summary>
         public void PerformTriggerAbility(GameObject target) => triggerAbility?.Invoke(target);
+        public void PerfromAbility() => performAbility();
 
         //Once Perform Action handler allows this action it starts this process 
-        public UtilityAnimations.AnimationInfo Perform(Creature creature) {
+        public virtual UtilityAnimations.AnimationInfo Perform(Creature creature) {
 
+            requirementCollection.ListenToRequirements(creature);
             StartSubAction();
+            SubToAnimatorMessage(EndAnimationListener);
+            AnimationHandler.SubToAnimatorMessage(AnimationMessageListener);
             return animationInfo;
         }
 
+
         //Checks requirements for the ability
-        //Yet to be implemented
-        public bool Requirements() {
+        public (bool isAllowed, string errorMessage) CheckRequirements(Creature creature) => requirementCollection.CheckRequirements(creature);
 
-            Debug.Log("Check requirements");
-            return true;
-        }
-
-        //Animation Triggers
-        //Lister to Animation ActionActivate
-        //This occurs ex when Weapon hitbox should activate or when to fire of an ability
-
-        /// <summary>
-        /// Activate -> Usually set at the start of an animation (Example activate weapon collider)
-        /// </summary>
-        /// <param name="trigger"> Action called when trigger is called </param>
-        public void SubToActionActivate(Action Lister) => AnimationHandler.AddActionActivateListener(Lister);
-        /// <summary>
-        /// Activate -> Usually set at the start of an animation (Example activate weapon collider)
-        /// </summary>
-        /// <param name="trigger"> Action called when trigger is called </param>
-        public void UnsubToActionActivate(Action Lister) => AnimationHandler.RemoveActionActivateListener(Lister);
-        /// <summary>
-        /// Deactivate -> Usually set at the end of an animation (Example deactivate weapon collider)
-        /// </summary>
-        /// <param name="trigger"> Action called when trigger is called </param>
-        public void SubToActionDeactivate(Action Lister) => AnimationHandler.AddActionDeactivateListener(Lister);
-        /// <summary>
-        /// Deactivate -> Usually set at the end of an animation (Example deactivate weapon collider)
-        /// </summary>
-        /// <param name="trigger"> Action called when trigger is called </param>
-        public void UnsubToActionDeactivate(Action Lister) => AnimationHandler.RemoveActionDeactivateListener(Lister);
-        /// <summary>
-        /// Trigger -> Usually set in the middle of an animation (Example want to cast a spell)
-        /// </summary>
-        /// <param name="trigger">Action called when trigger is called </param>
-        public void SubToAnimationActionTrigger(Action Lister) => AnimationHandler.AddActionTriggerListener(Lister);
-        /// <summary>
-        /// Trigger -> Usually set in the middle of an animation (Example want to cast a spell)
-        /// </summary>
-        /// <param name="trigger"> Action called when trigger is called </param>
-        public void UnsubToAnimationActionTrigger(Action Lister) => AnimationHandler.RemoveActionTriggerListener(Lister);
+        //Animation Messages
+        //This occurs ex when Weapon hitbox should activate or when to fire of an ability 
+        public void SubToAnimatorMessage(Action<AbilityPerformAction, int, string> listener) => animationMessageListeners += listener;
+        public void UnsubToAnimatorMessage(Action<AbilityPerformAction, int, string> listener) => animationMessageListeners -= listener;
 
         //Equipment Triggers
         /// <summary>
@@ -172,12 +157,23 @@ namespace RPG.Actions {
         //When Action is canceled/Finished unsubscripted to the required events
         private void StartUnsubAction() => unsubAction?.Invoke(user, this, performAbility);
 
+        //Listen to animator message and sends out the message with itself
+        private void AnimationMessageListener(int layerIndex, string message) => animationMessageListeners.Invoke(this, layerIndex, message);
+
         private Abilitys.Ability.AbilityBaseInfo GetAbilityBaseInfo => 
             new(Ability, energy, user, targetingInfo.TargetingTransform.position);
         
         private AnimatorHandler AnimationHandler => user.ActionHandler.AnimatorHandler;
-        
-        
+
+        private void EndAnimationListener(AbilityPerformAction perfromAction, int layerIndex, string message) {
+
+            if (UtilityAnimations.UPPERBODY_INDEX_LAYER != layerIndex &&
+                    UtilityAnimations.AnimatorMessageType.ACTION_END.ToString() != message) return;
+
+            user.ActionHandler.ActionPerformFinished(this);
+
+        }
+
     }
 
 }

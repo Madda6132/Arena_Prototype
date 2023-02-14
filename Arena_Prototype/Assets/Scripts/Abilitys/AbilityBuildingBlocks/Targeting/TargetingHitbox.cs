@@ -32,9 +32,10 @@ namespace RPG.Abilitys.Targeting {
             };
 
             performanceAction.SetDirectionFunction(getDirection);
-
+            //Change to listen to animator message
             performanceAction.SetSubAction(SubToPerformAction);
             performanceAction.SetUnsubAction(UnsubToPerformAction);
+
             performanceAction.SetAnimationInfo(animationInfo);
 
         }
@@ -59,10 +60,13 @@ namespace RPG.Abilitys.Targeting {
 
         //Subscribes to a weapon script to pass GameoObjects hit to Form
         protected override void SubToPerformAction(Creature user, AbilityPerformAction performanceAction, Action performAbility) {
-            
+
             //Sub to activate collider on equipment
-            performanceAction.SubToActionActivate(performanceAction.targetingInfo.ActivateCollider);
-            performanceAction.SubToActionDeactivate(performanceAction.targetingInfo.DeactivateCollider);
+            performanceAction.SubToAnimatorMessage(ActivateCollider);
+            performanceAction.SubToAnimatorMessage(DeactivateCollider);
+            //Old
+            //performanceAction.SubToActionActivate(performanceAction.targetingInfo.ActivateCollider);
+            //performanceAction.SubToActionDeactivate(performanceAction.targetingInfo.DeactivateCollider);
 
 
             performanceAction.SetTriggerAbility(PerformAbilityColliderTrigger);
@@ -72,8 +76,11 @@ namespace RPG.Abilitys.Targeting {
         protected override void UnsubToPerformAction(Creature user, AbilityPerformAction performanceAction, Action performAbility) {
 
             //Unsub to activate collider on equipment
-            performanceAction.UnsubToActionActivate(performanceAction.targetingInfo.ActivateCollider);
-            performanceAction.UnsubToActionDeactivate(performanceAction.targetingInfo.DeactivateCollider);
+            performanceAction.UnsubToAnimatorMessage(ActivateCollider);
+            performanceAction.UnsubToAnimatorMessage(DeactivateCollider);
+            //Old
+            //performanceAction.UnsubToActionActivate(performanceAction.targetingInfo.ActivateCollider);
+            //performanceAction.UnsubToActionDeactivate(performanceAction.targetingInfo.DeactivateCollider);
 
             //Encase of interruption
             performanceAction.targetingInfo.DeactivateCollider();
@@ -110,6 +117,27 @@ namespace RPG.Abilitys.Targeting {
         private Vector3 ColliderTriggerDirection(Vector3 startPosition, GameObject target) =>
             (target.GetComponent<Creature>().TargetMark.position - startPosition).normalized;
 
+        private void ActivateCollider(AbilityPerformAction performanceAction, int layerIndex, string message) {
+
+            
+                if (UtilityAnimations.UPPERBODY_INDEX_LAYER != layerIndex && 
+                    UtilityAnimations.AnimatorMessageType.ACTION_ACTIVE.ToString() != message) return;
+
+            //Now it subs to it??
+            //You want collider to activate
+            performanceAction.targetingInfo.ActivateCollider();
+        }
+
+        private void DeactivateCollider(AbilityPerformAction performanceAction, int layerIndex, string message) {
+
+
+            if (UtilityAnimations.UPPERBODY_INDEX_LAYER != layerIndex &&
+                UtilityAnimations.AnimatorMessageType.ACTION_DEACTIVE.ToString() != message) return;
+
+            //Now it subs to it??
+            //You want collider to activate
+            performanceAction.targetingInfo.DeactivateCollider();
+        }
 
     }
 

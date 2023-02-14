@@ -1,7 +1,8 @@
 using UnityEngine;
 using System;
+using RPG.Abilitys.Form;
 
-namespace RPG.Abilitys {
+    namespace RPG.Abilitys {
     /// <summary>
     /// The ability gets called when the ability state is made such as start/Tick/Target/End
     /// </summary>

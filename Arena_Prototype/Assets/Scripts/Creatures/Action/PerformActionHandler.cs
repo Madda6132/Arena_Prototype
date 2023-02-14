@@ -1,5 +1,6 @@
 using UnityEngine;
 using RPG.Creatures;
+using System.Collections.Generic;
 
 namespace RPG.Actions {
     public class PerformActionHandler {
@@ -8,12 +9,24 @@ namespace RPG.Actions {
         Creature creature;
         public AnimatorHandler AnimatorHandler { get; }
 
+        public List<IPerformAction> performanceActionList = new();
+        IPerformAction currentPerformAction;
+
         //Is currently performing a action
-        public bool isBusy { get; private set; } = false;
+        public ResultObserver<bool> IsBusyObserver = new();
+        public bool IsBusy {
 
-        public IPerformAction performanceAction { get; private set; }
+            get {
+                return _IsBusy;
+            }
 
-        
+            private set {
+                _IsBusy = value;
+                IsBusyObserver.OnResultUpdate(IsBusy);
+            }
+        }
+        private bool _IsBusy = false;
+
         public PerformActionHandler(Creature creature) { 
 
             this.creature = creature;
@@ -23,42 +36,72 @@ namespace RPG.Actions {
 
             AnimatorHandler = new(animator);
 
+
         }
 
+        public void Update() {
+
+            AnimatorHandler.Update();
+            performanceActionList.ForEach(x => x.Update());
+        }
 
         /// <summary>
         /// Creature passes message -> Animator sends messages to this method
         /// </summary>
-        public void AnimationReciver(string animationTrigger) => AnimatorHandler.PerformTrigger(animationTrigger);
+        public void AnimationMessageReciver(int layerIndex, string animationTrigger) => AnimatorHandler.AnimationMessageReciver(layerIndex, animationTrigger);
 
         public void StartAction(IPerformAction action) {
 
-            //Send failure message
-            if (isBusy || creature.incapacitated || performanceAction != null ||!action.Requirements()) return;
+            
+            (bool isAllowed, string errorMessage) feedback = action.CheckRequirements(creature);
 
+            if (!feedback.isAllowed) {
 
-            //creatureAction?.Finish(); Might be used for Channel Ability or rapid fire
-            performanceAction = action;
+                //Send failure message
+                if (creature.TryGetComponent(out GameSystem.CreatureMessageDelegate messageDelegate))
+                    messageDelegate.DelegateError(feedback.errorMessage);
+
+                return;
+            }
+
+            if (action.CauseBusy) {
+
+                IsBusy = action.CauseBusy;
+                currentPerformAction?.Finish();
+                currentPerformAction = action;
+            }
+
+            performanceActionList.Add(action);
 
             //returns name of animation 
             AnimatorHandler.StartAnimation(action.Perform(creature));
-            isBusy = true;
-
-
+            
         }
         
+        /// <summary>
+        /// Cancel all active actions. (Usually called when incapacitated)
+        /// </summary>
         public void Interupt() {
+            
+            List<IPerformAction> loopList = new(performanceActionList);
 
-            performanceAction?.Cancel();
-            performanceAction = null;
-            isBusy = false;
+            loopList.ForEach(x => {
+                x.Cancel();
+                performanceActionList.Remove(x);
+            });
+
+            IsBusy = false;
         }
 
-        public void ActionAnimationFinished() {
+        public void ActionPerformFinished(IPerformAction performanceAction) {
 
             performanceAction?.Cancel();
-            performanceAction = null;
-            isBusy = false;
+
+            if(performanceActionList.Contains(performanceAction))
+                performanceActionList.Remove(performanceAction);
+
+            if(performanceAction.CauseBusy)
+                IsBusy = false;
         }
     }
 

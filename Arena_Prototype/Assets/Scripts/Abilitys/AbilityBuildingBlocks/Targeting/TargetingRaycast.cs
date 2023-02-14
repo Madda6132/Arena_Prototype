@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using RPG.Creatures;
 
 namespace RPG.Abilitys.Targeting {
     /// <summary>
@@ -22,6 +23,7 @@ namespace RPG.Abilitys.Targeting {
 
             raySphereSize *= _Multiplier;
             rayTargetAmount *= _Multiplier;
+
             //---TODO---
             //Use energy to determine the size and target amount of the ray
 

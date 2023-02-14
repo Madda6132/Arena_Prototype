@@ -2,41 +2,43 @@ using RPG.Abilitys.Form;
 using UnityEngine;
 using System.Linq;
 
-public class BehaviorExplosion : AbstractFormBehavior {
+namespace RPG.Abilitys.Form {
+        public class BehaviorExplosion : AbstractFormBehavior {
 
     
-    float explosionRadius = 2f;
-    int pointsAmount = 3;
+        float explosionRadius = 2f;
+        int pointsAmount = 3;
 
 
-    public override void StartForm(RPG.Abilitys.Ability.AbilityBaseInfo abilityBaseInfo) {
-        base.StartForm(abilityBaseInfo);
+        public override void StartForm(RPG.Abilitys.Ability.AbilityBaseInfo abilityBaseInfo) {
+            base.StartForm(abilityBaseInfo);
 
 
-        GameObject[] _Targets = Physics.OverlapSphere(transform.position, explosionRadius).Select(x => 
-            x.gameObject).ToArray();
+            GameObject[] _Targets = Physics.OverlapSphere(transform.position, explosionRadius).Select(x => 
+                x.gameObject).ToArray();
 
-        SendGameObject(_Targets);
-    }
+            SendGameObject(_Targets);
+        }
 
-    public override Vector3[] GetTargetPositions() =>
-        RPG.UtilityForm.GetCircleRandomPoints(transform, explosionRadius, pointsAmount);
+        public override Vector3[] GetTargetPositions() =>
+            RPG.UtilityForm.GetCircleRandomPoints(transform, explosionRadius, pointsAmount);
 
 
-    public override GameObject[] GetTargetObjects() =>
-        Physics.OverlapSphere(transform.position, explosionRadius).Select(x => x.gameObject).ToArray();
+        public override GameObject[] GetTargetObjects() =>
+            Physics.OverlapSphere(transform.position, explosionRadius).Select(x => x.gameObject).ToArray();
 
-    /*---Protected---*/
+        /*---Protected---*/
 
-    protected override Vector3 GetStartPosition() => transform.position;
-    protected override Vector3 GetEndPosition() => transform.position;
-    protected override Vector3 GetTickPosition() => transform.position;
-    protected override void ExtraUpdate() { }
+        protected override Vector3 GetStartPosition() => transform.position;
+        protected override Vector3 GetEndPosition() => transform.position;
+        protected override Vector3 GetTickPosition() => transform.position;
+        protected override void ExtraUpdate() { }
 
-    /*---Private---*/
+        /*---Private---*/
 
-    private void Start() {
-        _LifeTime = 2f;
+        private void Start() {
+            _LifeTime = 2f;
 
+        }
     }
 }

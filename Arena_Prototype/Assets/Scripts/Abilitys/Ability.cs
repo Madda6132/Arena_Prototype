@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Linq;
 using System;
 using RPG.Creatures;
+using RPG.Abilitys.Form;
 
 namespace RPG.Abilitys {
 
@@ -156,6 +157,8 @@ namespace RPG.Abilitys {
 
         public Actions.AbilityPerformAction GetAbilityAction(Creature creature, Combat.IAbilityTargetingObject targetingInfo) =>
            new (this, creature, targetingInfo);
+        public Actions.ChannelPerformAction GetChannelAction(Creature creature, Combat.IAbilityTargetingObject targetingInfo) =>
+           new(this, creature, targetingInfo);
 
         public struct AbilityBaseInfo {
 

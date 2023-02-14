@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using RPG.Creatures;
-using RPG.Actions;
 
 public class AnimationPerformActionTrigger : StateMachineBehaviour
 {
@@ -19,7 +16,7 @@ public class AnimationPerformActionTrigger : StateMachineBehaviour
         //On enter tell the ActionHandler that animation finished
         Creature creature = animator.GetComponent<Creature>();
 
-        creature?.ActionHandler.ActionAnimationFinished();
+        //creature?.ActionHandler.ActionPerformFinished();
         
 
         

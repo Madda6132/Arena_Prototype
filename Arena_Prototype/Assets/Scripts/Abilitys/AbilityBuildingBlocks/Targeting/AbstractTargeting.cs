@@ -40,16 +40,17 @@ namespace RPG.Abilitys.Targeting {
             performanceAction.SetSubAction(SubToPerformAction);
             //Set the unsubscriptions on the performanceAction if the action finishes or canceled
             performanceAction.SetUnsubAction(UnsubToPerformAction);
+
             performanceAction.SetAnimationInfo(animationInfo);
 
             //New Action to circumvent return value
-            Action<Ability.AbilityBaseInfo, Vector3, Vector3, Vector3> perAction = (abilityBaseInfo, startPos, forwardDir, upDir) => {
+            Action<Ability.AbilityBaseInfo, Vector3, Vector3, Vector3> performAction = (abilityBaseInfo, startPos, forwardDir, upDir) => {
                 Ability ability = performanceAction.Ability;
                 ability.PerformAbilityAtTargeting(abilityBaseInfo, startPos, forwardDir, upDir);
             };
 
             //Set the action to take when the attack animation triggers
-            performanceAction.SetPerformAbility(perAction);
+            performanceAction.SetPerformAbility(performAction);
         }
 
         
@@ -70,9 +71,8 @@ namespace RPG.Abilitys.Targeting {
         protected virtual void SubToPerformAction(Creature user, AbilityPerformAction performanceAction,
             Action performAbility) {
             //Add listener on animator trigger
-            AnimatorHandler animatiorHandler = user.ActionHandler.AnimatorHandler;
-            animatiorHandler.AddActionTriggerListener(performAbility);
-            
+            performanceAction.SubToAnimatorMessage(AnimationTriggerListener);
+
         }
 
         /// <summary>
@@ -81,9 +81,18 @@ namespace RPG.Abilitys.Targeting {
         protected virtual void UnsubToPerformAction(Creature user, AbilityPerformAction performanceAction,
             Action performAbility) {
             //Remove Listener on animator trigger when done/Interrupted
-            AnimatorHandler animatiorHandler = user.ActionHandler.AnimatorHandler;
-            animatiorHandler.RemoveActionTriggerListener(performAbility);
+            performanceAction.UnsubToAnimatorMessage(AnimationTriggerListener);
 
+        }
+
+        /*---Private---*/
+
+        private void AnimationTriggerListener(AbilityPerformAction performanceAction, int layerIndex, string message) {
+
+            if (UtilityAnimations.UPPERBODY_INDEX_LAYER != layerIndex &&
+                UtilityAnimations.AnimatorMessageType.ACTION_TRIGGER.ToString() != message) return;
+
+            performanceAction.PerfromAbility();
         }
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using RPG.Inventory;
+using System;
 
 namespace RPG.Creatures {
     /// <summary>
@@ -14,6 +15,8 @@ namespace RPG.Creatures {
         Transform leftEquipmentPlacement;
 
         Equipment weaponEquipment;
+        Action channelRelese;
+        
 
         public EquipmentManager(Creature creature) {
 
@@ -32,14 +35,22 @@ namespace RPG.Creatures {
         /// </summary>
         public void ActivateWeaponEquipmentQuick() {
 
-            if (performActionHandler.isBusy) return;
+            if (performActionHandler.IsBusy) return;
             //Send action to action handler
             performActionHandler.StartAction(weaponEquipment.GetAbilityPerformAction(creature)); 
         }
+
         /// <summary>
         /// Currently not in use as Channel Ability isn't implemented yet
         /// </summary>
-        public void ActivateWeaponEquipmentChannel() => weaponEquipment.ActivateChannelAbility(creature);
+        public void ActivateWeaponEquipmentChannel() {
+
+            if (performActionHandler.IsBusy) return;
+            //Send action to action handler
+            performActionHandler.StartAction(weaponEquipment.ActivateChannelAbility(creature));
+        }
+        public void DeactivateWeaponEquipmentChannel() => channelRelese?.Invoke();
+
         public Equipment GetWeaponEquipment => weaponEquipment;
         //Main Weapon
         public void SetRightWeaponEquipment(Equipment equipment) {
@@ -53,6 +64,9 @@ namespace RPG.Creatures {
 
             SetEquipmentPosition(equipment, leftEquipmentPlacement);
         }
+
+        public void SubToChannelRelese(Action listener) => channelRelese += listener;
+        public void UnsubToChannelRelese(Action listener) => channelRelese -= listener;
 
         /*---Private---*/
 

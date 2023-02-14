@@ -1,3 +1,5 @@
+using RPG.Abilitys.Form;
+
 public interface IActionMessageListener
 {
 

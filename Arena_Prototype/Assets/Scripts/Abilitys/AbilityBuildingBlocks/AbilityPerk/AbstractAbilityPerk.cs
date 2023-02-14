@@ -1,4 +1,6 @@
-namespace RPG.Abilitys.Perk {
+using RPG.Abilitys.Form;
+
+    namespace RPG.Abilitys.Perk {
     
     public abstract class AbstractAbilityPerk {
         /// <summary>

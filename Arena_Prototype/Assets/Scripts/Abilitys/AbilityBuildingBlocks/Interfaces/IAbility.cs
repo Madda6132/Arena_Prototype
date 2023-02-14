@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using RPG.Abilitys.Form;
 
 namespace RPG.Abilitys {
     public interface IAbility {

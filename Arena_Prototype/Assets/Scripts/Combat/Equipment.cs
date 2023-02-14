@@ -34,11 +34,10 @@ namespace RPG.Inventory {
         public QuickAbility GetQuickAbility => quickAbility;
         public ChannelAbility GetChannelAbility => channelAbility;
 
-        public AbilityPerformAction GetAbilityPerformAction(Creature creature) => quickAbility.GetAbilityAction(creature, this);
+        public IPerformAction GetAbilityPerformAction(Creature creature) => quickAbility.GetAbilityAction(creature, this);
 
-        public void ActivateChannelAbility(Creature creature) {
-            Debug.Log("ChannelAbility");
-        }
+        public IPerformAction ActivateChannelAbility(Creature creature) => channelAbility.GetAbilityAction(creature, this);
+
         public void ActivateCollider() => TargetingCollider.enabled = true;
         public void DeactivateCollider() => TargetingCollider.enabled = false;
 
@@ -61,9 +60,7 @@ namespace RPG.Inventory {
             Physics.IgnoreCollision(TargetingCollider, userCollider, true);
 
             quickAbility = new(AbilityElement.Fire, 400);
-
-            Debug.Log("Create ChannelAbility");
-            //channelAbility = new() Not made yet
+            channelAbility = new(AbilityElement.Fire, 400);
         }
 
         private void OnTriggerEnter(Collider other) {

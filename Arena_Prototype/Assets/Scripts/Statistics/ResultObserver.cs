@@ -19,10 +19,7 @@ namespace RPG.Statistics {
 
 
         }
-        public ResultObserver(Action<UpdateValue> updateMethod) {
-            this.updateMethod += updateMethod;
 
-        }
 
         public void AddUpdateMethod(Action<UpdateValue> updateMethod) => this.updateMethod += updateMethod;
         public void RemoveUpdateMethod(Action<UpdateValue> updateMethod) => this.updateMethod -= updateMethod;
@@ -36,5 +33,17 @@ namespace RPG.Statistics {
 
         }
     }
+}
+
+/// The observer will listen to value change in AbstractStatistic and send the updated value to an action
+public class ResultObserver<UpdateValue> : IResultUpdateListener<UpdateValue> {
+
+    Action<UpdateValue> updateMethod;
+
+
+    public void AddUpdateMethod(Action<UpdateValue> updateMethod) => this.updateMethod += updateMethod;
+    public void RemoveUpdateMethod(Action<UpdateValue> updateMethod) => this.updateMethod -= updateMethod;
+
+    public void OnResultUpdate(UpdateValue result) => updateMethod?.Invoke(result);
 }
 
